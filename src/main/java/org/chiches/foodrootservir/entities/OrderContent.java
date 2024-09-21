@@ -24,12 +24,12 @@ public class OrderContent extends BaseEntity {
         this.order = order;
     }
 
-    public DishItem getDish() {
+    public DishItem getDishItem() {
         return dishItem;
     }
 
-    public void setDish(DishItem dish) {
-        this.dishItem = dish;
+    public void setDishItem(DishItem dishItem) {
+        this.dishItem = dishItem;
     }
 
     public Integer getQuantity() {
