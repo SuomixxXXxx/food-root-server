@@ -1,4 +1,4 @@
-package Entities;
+package org.chiches.foodrootservir.entities;
 
 import jakarta.persistence.*;
 import java.util.List;

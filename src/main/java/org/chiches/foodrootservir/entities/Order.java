@@ -1,6 +1,5 @@
-package Entities;
+package org.chiches.foodrootservir.entities;
 
-import Entities.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
