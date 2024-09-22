@@ -6,7 +6,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class UserEntity extends BaseEntity {
 
     private String name;
     private String surname;
@@ -14,8 +14,8 @@ public class User extends BaseEntity {
     private String password;
     private String role;
 
-    @OneToMany(mappedBy = "user")
-    private List<Order> orders;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<OrderEntity> orders;
 
     public String getName() {
         return name;
@@ -57,11 +57,11 @@ public class User extends BaseEntity {
         this.role = role;
     }
 
-    public List<Order> getOrders() {
+    public List<OrderEntity> getOrders() {
         return orders;
     }
 
-    public void setOrders(List<Order> orders) {
+    public void setOrders(List<OrderEntity> orders) {
         this.orders = orders;
     }
 }

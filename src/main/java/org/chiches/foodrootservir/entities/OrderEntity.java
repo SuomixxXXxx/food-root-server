@@ -6,25 +6,25 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-public class Order extends BaseEntity {
+public class OrderEntity extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private UserEntity user;
 
     private Double fullPrice;
     private String status;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfCompletion;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderContent> orderContents;
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private List<OrderContentEntity> orderContents;
 
-    public User getUser() {
+    public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserEntity user) {
         this.user = user;
     }
 
@@ -60,11 +60,11 @@ public class Order extends BaseEntity {
         this.dateOfCompletion = dateOfCompletion;
     }
 
-    public List<OrderContent> getOrderContents() {
+    public List<OrderContentEntity> getOrderContents() {
         return orderContents;
     }
 
-    public void setOrderContents(List<OrderContent> orderContents) {
+    public void setOrderContents(List<OrderContentEntity> orderContents) {
         this.orderContents = orderContents;
     }
 }

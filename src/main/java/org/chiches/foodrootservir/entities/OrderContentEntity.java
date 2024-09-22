@@ -4,31 +4,31 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "order_contents")
-public class OrderContent extends BaseEntity {
+public class OrderContentEntity extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
-    private Order order;
+    private OrderEntity order;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dish_item_id")
-    private DishItem dishItem;
+    private DishItemEntity dishItem;
 
     private Integer quantity;
 
-    public Order getOrder() {
+    public OrderEntity getOrder() {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void setOrder(OrderEntity order) {
         this.order = order;
     }
 
-    public DishItem getDishItem() {
+    public DishItemEntity getDishItem() {
         return dishItem;
     }
 
-    public void setDishItem(DishItem dishItem) {
+    public void setDishItem(DishItemEntity dishItem) {
         this.dishItem = dishItem;
     }
 
