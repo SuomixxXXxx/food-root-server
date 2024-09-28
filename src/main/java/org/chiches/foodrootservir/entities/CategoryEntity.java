@@ -5,12 +5,12 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
-public class Category extends BaseEntity {
+public class CategoryEntity extends BaseEntity {
 
     private String name;
 
-    @OneToMany(mappedBy = "category")
-    private List<DishItem> dishItems;
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private List<DishItemEntity> dishItems;
 
     public String getName() {
         return name;
@@ -20,11 +20,11 @@ public class Category extends BaseEntity {
         this.name = name;
     }
 
-    public List<DishItem> getDishItems() {
+    public List<DishItemEntity> getDishItems() {
         return dishItems;
     }
 
-    public void setDishItems(List<DishItem> dishItems) {
+    public void setDishItems(List<DishItemEntity> dishItems) {
         this.dishItems = dishItems;
     }
 }

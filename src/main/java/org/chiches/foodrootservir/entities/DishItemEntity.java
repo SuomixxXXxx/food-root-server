@@ -6,25 +6,25 @@ import java.util.List;
 
 @Entity
 @Table(name = "dish_items")
-public class DishItem extends BaseEntity {
+public class DishItemEntity extends BaseEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Category category;
+    private CategoryEntity category;
 
     private String name;
     private Double weight;
     private Double price;
     private Integer quantity;
 
-    @OneToMany(mappedBy = "dishItem")
-    private List<OrderContent> orderContents;
+    @OneToMany(mappedBy = "dishItem", fetch = FetchType.LAZY)
+    private List<OrderContentEntity> orderContents;
 
-    public Category getCategory() {
+    public CategoryEntity getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(CategoryEntity category) {
         this.category = category;
     }
 
@@ -60,11 +60,11 @@ public class DishItem extends BaseEntity {
         this.quantity = quantity;
     }
 
-    public List<OrderContent> getOrderContents() {
+    public List<OrderContentEntity> getOrderContents() {
         return orderContents;
     }
 
-    public void setOrderContents(List<OrderContent> orderContents) {
+    public void setOrderContents(List<OrderContentEntity> orderContents) {
         this.orderContents = orderContents;
     }
 }
