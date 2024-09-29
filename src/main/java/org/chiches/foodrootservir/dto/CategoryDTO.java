@@ -1,7 +1,11 @@
 package org.chiches.foodrootservir.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 public class CategoryDTO {
+    @NotNull(message = "Id cannot be empty")
     private Long id;
+    @NotNull(message = "Name cannot be empty")
     private String name;
 
     public CategoryDTO(Long id, String name) {

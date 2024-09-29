@@ -1,5 +1,8 @@
 package org.chiches.foodrootservir.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -8,6 +11,7 @@ public class OrderDTO {
     private String status;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfCompletion;
+    @NotNull(message = "Order content cannot be empty")
     private List<OrderContentDTO> orderContentDTOs;
 
     public OrderDTO(Double fullPrice, String status, LocalDateTime dateOfCreation, LocalDateTime dateOfCompletion, List<OrderContentDTO> orderContentDTOs) {

@@ -1,9 +1,23 @@
 package org.chiches.foodrootservir.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 public class UserDto {
+    @NotBlank(message = "Name cannot be empty")
+    @Size(min = 2, max = 30, message = "Name must be between 2 and 30 characters")
     private String name;
+    @NotBlank(message = "Surname cannot be empty")
+    @Size(min = 2, max = 30, message = "Surname must be between 2 and 30 characters")
     private String surname;
+    @NotBlank(message = "Login cannot be empty")
+    @Size(min = 8, max = 30, message = "Login must be between 8 and 30 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Login must contain only letters and numbers")
     private String login;
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 12, max = 30, message = "Password must be between 12 and 30 characters")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]+$", message = "Password must contain at least one uppercase letter, one lowercase letter and one number")
     private String password;
 
     public UserDto(String name, String surname, String login, String password) {
