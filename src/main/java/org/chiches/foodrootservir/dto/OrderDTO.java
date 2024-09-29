@@ -7,11 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderDTO {
-    @NotNull(message = "Full price cannot be empty")
     private Double fullPrice;
-    @NotBlank(message = "Status cannot be empty")
     private String status;
-    @NotNull(message = "Date of creation cannot be empty")
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfCompletion;
     @NotNull(message = "Order content cannot be empty")
