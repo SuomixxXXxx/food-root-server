@@ -1,8 +1,17 @@
 package org.chiches.foodrootservir.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class OrderContentDTO {
+    @NotNull(message = "Order cannot be empty")
     private OrderDTO orderDTO;
+    @NotNull(message = "Dish item cannot be empty")
     private DishItemDTO dishItemDTO;
+    @NotNull(message = "Quantity cannot be empty")
+    @Min(value = 1, message = "Quantity must be greater than 0")
+    @Max(value = 10, message = "Quantity must be less than 10")
     private Integer quantity;
 
     public OrderContentDTO(OrderDTO orderDTO, DishItemDTO dishItemDTO, Integer quantity) {

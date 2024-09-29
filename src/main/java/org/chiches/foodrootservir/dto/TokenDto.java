@@ -1,6 +1,9 @@
 package org.chiches.foodrootservir.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class TokenDto {
+    // не нужно тк такое только на выходе
     private String token;
     private String refreshToken;
 
