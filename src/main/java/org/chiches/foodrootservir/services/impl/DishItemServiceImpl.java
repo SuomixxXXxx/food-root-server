@@ -8,6 +8,7 @@ import org.chiches.foodrootservir.exceptions.DatabaseException;
 import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
 import org.chiches.foodrootservir.repositories.CategoryRepository;
 import org.chiches.foodrootservir.repositories.DishItemRepository;
+import org.chiches.foodrootservir.services.DishItemService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;

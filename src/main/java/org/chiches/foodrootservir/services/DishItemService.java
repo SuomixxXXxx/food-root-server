@@ -1,4 +1,4 @@
-package org.chiches.foodrootservir.services.impl;
+package org.chiches.foodrootservir.services;
 
 import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.springframework.http.ResponseEntity;

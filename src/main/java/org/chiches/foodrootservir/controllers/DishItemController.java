@@ -1,7 +1,7 @@
 package org.chiches.foodrootservir.controllers;
 
 import org.chiches.foodrootservir.dto.DishItemDTO;
-import org.chiches.foodrootservir.services.impl.DishItemService;
+import org.chiches.foodrootservir.services.DishItemService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
