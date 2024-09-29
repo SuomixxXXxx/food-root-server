@@ -11,6 +11,9 @@ public class DishItemDTO {
     private Integer quantity;
     private List<OrderContentDTO> orderContentDTOs;
 
+    public DishItemDTO() {
+    }
+
     public DishItemDTO(Long id, CategoryDTO categoryDTO, String name, Double weight, Double price, Integer quantity, List<OrderContentDTO> orderContentDTOs) {
         this.id = id;
         this.categoryDTO = categoryDTO;
