@@ -11,6 +11,9 @@ public class OrderDTO {
     private LocalDateTime dateOfCompletion;
     private List<OrderContentDTO> orderContentDTOs;
 
+    public OrderDTO() {
+    }
+
     public OrderDTO(int id, Double fullPrice, String status, LocalDateTime dateOfCreation, LocalDateTime dateOfCompletion, List<OrderContentDTO> orderContentDTOs) {
         this.id = id;
         this.fullPrice = fullPrice;

@@ -11,14 +11,18 @@ import org.chiches.foodrootservir.exceptions.NotEnoughStockException;
 import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
 import org.chiches.foodrootservir.repositories.DishItemRepository;
 import org.chiches.foodrootservir.repositories.OrderRepository;
+import org.chiches.foodrootservir.services.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class OrderServiceImpl {
+@Service
+public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final ModelMapper modelMapper;
@@ -30,9 +34,11 @@ public class OrderServiceImpl {
         this.dishItemRepository = dishItemRepository;
     }
 
+    @Override
     @Transactional
     public ResponseEntity<OrderDTO> createOrder(OrderDTO orderDTO) {
         OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderContents(new ArrayList<>());
 
         Double price = 0d;
         for(OrderContentDTO orderContentDTO : orderDTO.getOrderContentDTOs()) {
@@ -55,6 +61,7 @@ public class OrderServiceImpl {
             ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
+            System.out.println(e.getMessage());
             throw new DatabaseException("The order was not created due to problems connecting to the database");
         }
     }

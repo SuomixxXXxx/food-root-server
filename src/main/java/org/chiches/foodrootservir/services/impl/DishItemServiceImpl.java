@@ -32,7 +32,12 @@ public class DishItemServiceImpl implements DishItemService {
     @Override
     public ResponseEntity<DishItemDTO> createDishItem(DishItemDTO dishItemDTO) {
         DishItemEntity dishItemEntity = modelMapper.map(dishItemDTO, DishItemEntity.class);
+        CategoryEntity categoryEntity = categoryRepository.findById(dishItemDTO.getCategoryDTO().getId())
+                        .orElseThrow();
+        dishItemEntity.setCategory(categoryEntity);
         try {
+            modelMapper.typeMap(DishItemEntity.class, DishItemDTO.class)
+                    .addMappings(mapper -> mapper.map(src -> src.getCategory(), DishItemDTO::setCategoryDTO));
             DishItemEntity savedDishItemEntity = dishItemRepository.save(dishItemEntity);
             DishItemDTO savedDishItemDTO = modelMapper.map(savedDishItemEntity, DishItemDTO.class);
             ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);

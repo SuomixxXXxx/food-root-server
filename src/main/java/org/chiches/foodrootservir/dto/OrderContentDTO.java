@@ -5,6 +5,9 @@ public class OrderContentDTO {
     private DishItemDTO dishItemDTO;
     private Integer quantity;
 
+    public OrderContentDTO() {
+    }
+
     public OrderContentDTO(OrderDTO orderDTO, DishItemDTO dishItemDTO, Integer quantity) {
         this.orderDTO = orderDTO;
         this.dishItemDTO = dishItemDTO;
