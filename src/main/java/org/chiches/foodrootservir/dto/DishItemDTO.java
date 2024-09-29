@@ -1,19 +1,19 @@
 package org.chiches.foodrootservir.dto;
 
-import org.chiches.foodrootservir.entities.CategoryEntity;
-
 import java.util.List;
 
 public class DishItemDTO {
-    private CategoryEntity category;
+    private Long id;
+    private CategoryDTO categoryDTO;
     private String name;
     private Double weight;
     private Double price;
     private Integer quantity;
     private List<OrderContentDTO> orderContentDTOs;
 
-    public DishItemDTO(CategoryEntity category, String name, Double weight, Double price, Integer quantity, List<OrderContentDTO> orderContentDTOs) {
-        this.category = category;
+    public DishItemDTO(Long id, CategoryDTO categoryDTO, String name, Double weight, Double price, Integer quantity, List<OrderContentDTO> orderContentDTOs) {
+        this.id = id;
+        this.categoryDTO = categoryDTO;
         this.name = name;
         this.weight = weight;
         this.price = price;
@@ -21,12 +21,20 @@ public class DishItemDTO {
         this.orderContentDTOs = orderContentDTOs;
     }
 
-    public CategoryEntity getCategory() {
-        return category;
+    public Long getId() {
+        return id;
     }
 
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public CategoryDTO getCategoryDTO() {
+        return categoryDTO;
+    }
+
+    public void setCategoryDTO(CategoryDTO categoryDTO) {
+        this.categoryDTO = categoryDTO;
     }
 
     public String getName() {
