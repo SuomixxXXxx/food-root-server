@@ -8,6 +8,9 @@ public class CategoryDTO {
     @NotNull(message = "Name cannot be empty")
     private String name;
 
+    public CategoryDTO() {
+    }
+
     public CategoryDTO(Long id, String name) {
         this.id = id;
         this.name = name;

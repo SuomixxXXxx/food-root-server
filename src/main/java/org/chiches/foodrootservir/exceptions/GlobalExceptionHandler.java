@@ -42,4 +42,12 @@ public class GlobalExceptionHandler {
         ResponseEntity<ExceptionResponse> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
         return responseEntity;
     }
+
+    @ExceptionHandler(NotEnoughStockException.class)
+    public ResponseEntity<ExceptionResponse> catchNotEnoughStockException(NotEnoughStockException e) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(e.getMessage());
+        ResponseEntity<ExceptionResponse> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
+        return responseEntity;
+    }
+
 }

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderDTO {
+    private int id;
     private Double fullPrice;
     private String status;
     private LocalDateTime dateOfCreation;
@@ -14,12 +15,24 @@ public class OrderDTO {
     @NotNull(message = "Order content cannot be empty")
     private List<OrderContentDTO> orderContentDTOs;
 
-    public OrderDTO(Double fullPrice, String status, LocalDateTime dateOfCreation, LocalDateTime dateOfCompletion, List<OrderContentDTO> orderContentDTOs) {
+    public OrderDTO() {
+    }
+
+    public OrderDTO(int id, Double fullPrice, String status, LocalDateTime dateOfCreation, LocalDateTime dateOfCompletion, List<OrderContentDTO> orderContentDTOs) {
+        this.id = id;
         this.fullPrice = fullPrice;
         this.status = status;
         this.dateOfCreation = dateOfCreation;
         this.dateOfCompletion = dateOfCompletion;
         this.orderContentDTOs = orderContentDTOs;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Double getFullPrice() {

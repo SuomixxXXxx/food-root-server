@@ -31,7 +31,7 @@ public class CategoryController {
     }
 
     @GetMapping(path = "/get")
-    public ResponseEntity<List<CategoryDTO>> getCategory() {
+    public ResponseEntity<List<CategoryDTO>> getCategories() {
         ResponseEntity<List<CategoryDTO>> responseEntity = categoryService.findAll();
         return responseEntity;
     }

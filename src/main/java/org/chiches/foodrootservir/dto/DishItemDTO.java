@@ -1,5 +1,6 @@
 package org.chiches.foodrootservir.dto;
 
+import java.util.List;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -12,7 +13,7 @@ public class DishItemDTO {
     @NotNull(message = "Id cannot be empty")
     private Long id;
     @NotNull(message = "Category cannot be empty")
-    private CategoryDTO category;
+    private CategoryDTO categoryDTO;
     @NotBlank(message = "Name cannot be empty")
     private String name;
     @NotNull(message = "Weight cannot be empty")
@@ -27,9 +28,12 @@ public class DishItemDTO {
     @NotNull(message = "OrderContentDTO cannot be empty")
     private List<OrderContentDTO> orderContentDTOs;
 
-    public DishItemDTO(Long id, CategoryDTO category, String name, Double weight, Double price, Integer quantity, List<OrderContentDTO> orderContentDTOs) {
+    public DishItemDTO() {
+    }
+
+    public DishItemDTO(Long id, CategoryDTO categoryDTO, String name, Double weight, Double price, Integer quantity, List<OrderContentDTO> orderContentDTOs) {
         this.id = id;
-        this.category = category;
+        this.categoryDTO = categoryDTO;
         this.name = name;
         this.weight = weight;
         this.price = price;
@@ -44,13 +48,12 @@ public class DishItemDTO {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public CategoryDTO getCategory() {
-        return category;
+    public CategoryDTO getCategoryDTO() {
+        return categoryDTO;
     }
 
-    public void setCategory(CategoryDTO category) {
-        this.category = category;
+    public void setCategoryDTO(CategoryDTO categoryDTO) {
+        this.categoryDTO = categoryDTO;
     }
 
     public String getName() {

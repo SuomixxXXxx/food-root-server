@@ -14,6 +14,9 @@ public class OrderContentDTO {
     @Max(value = 10, message = "Quantity must be less than 10")
     private Integer quantity;
 
+    public OrderContentDTO() {
+    }
+
     public OrderContentDTO(OrderDTO orderDTO, DishItemDTO dishItemDTO, Integer quantity) {
         this.orderDTO = orderDTO;
         this.dishItemDTO = dishItemDTO;
