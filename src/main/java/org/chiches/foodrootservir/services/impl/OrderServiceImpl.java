@@ -6,6 +6,7 @@ import org.chiches.foodrootservir.dto.OrderContentDTO;
 import org.chiches.foodrootservir.dto.OrderDTO;
 import org.chiches.foodrootservir.entities.*;
 import org.chiches.foodrootservir.exceptions.DatabaseException;
+import org.chiches.foodrootservir.exceptions.InvalidArgumentException;
 import org.chiches.foodrootservir.exceptions.NotEnoughStockException;
 import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
 import org.chiches.foodrootservir.repositories.DishItemRepository;
@@ -109,10 +110,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<OrderDTO> cancelOrder(OrderDTO orderDTO) {
+    public ResponseEntity<OrderDTO> updateOrderStatus(OrderDTO orderDTO) {
         OrderEntity orderEntity = orderRepository.findById(orderDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderDTO.getId() + " not found"));
-        orderEntity.setStatus(OrderStatus.CANCELED);
+        if (orderDTO.getStatus().equals(OrderStatus.CANCELED)) {
+            orderEntity.setStatus(OrderStatus.CANCELED);
+        } else if (orderDTO.getStatus().equals(OrderStatus.COMPLETED)) {
+            orderEntity.setStatus(OrderStatus.COMPLETED);
+            orderEntity.setDateOfCompletion(LocalDateTime.now());
+        } else {
+            throw new InvalidArgumentException("Invalid order status");
+        }
+
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
             OrderDTO savedOrderDTO = modelMapper.map(savedOrderEntity, OrderDTO.class);

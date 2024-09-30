@@ -29,10 +29,10 @@ public class OrderController {
         return responseEntity;
     }
 
-    @PatchMapping(path = "/cancel")
-    public ResponseEntity<OrderDTO> cancelOrder(OrderDTO orderDTO) {
+    @PatchMapping(path = "/updateStatus")
+    public ResponseEntity<OrderDTO> updateOrderStatus(@RequestBody OrderDTO orderDTO) {
         ResponseEntity<OrderDTO> responseEntity;
-        responseEntity = orderService.cancelOrder(orderDTO);
+        responseEntity = orderService.updateOrderStatus(orderDTO);
         return responseEntity;
     }
 
