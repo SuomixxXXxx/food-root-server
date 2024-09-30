@@ -13,7 +13,7 @@ public class OrderEntity extends BaseEntity {
     private UserEntity user;
 
     private Double fullPrice;
-    private String status;
+    private OrderStatus status;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfCompletion;
 
@@ -36,11 +36,12 @@ public class OrderEntity extends BaseEntity {
         this.fullPrice = fullPrice;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    @Enumerated(EnumType.ORDINAL)
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 

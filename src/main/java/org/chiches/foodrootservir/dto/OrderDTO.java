@@ -2,14 +2,15 @@ package org.chiches.foodrootservir.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.chiches.foodrootservir.entities.OrderStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderDTO {
-    private int id;
+    private Long id;
     private Double fullPrice;
-    private String status;
+    private OrderStatus status;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfCompletion;
     @NotNull(message = "Order content cannot be empty")
@@ -18,7 +19,7 @@ public class OrderDTO {
     public OrderDTO() {
     }
 
-    public OrderDTO(int id, Double fullPrice, String status, LocalDateTime dateOfCreation, LocalDateTime dateOfCompletion, List<OrderContentDTO> orderContentDTOs) {
+    public OrderDTO(Long id, Double fullPrice, OrderStatus status, LocalDateTime dateOfCreation, LocalDateTime dateOfCompletion, List<OrderContentDTO> orderContentDTOs) {
         this.id = id;
         this.fullPrice = fullPrice;
         this.status = status;
@@ -27,11 +28,11 @@ public class OrderDTO {
         this.orderContentDTOs = orderContentDTOs;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -43,11 +44,11 @@ public class OrderDTO {
         this.fullPrice = fullPrice;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 
