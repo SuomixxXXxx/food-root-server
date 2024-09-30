@@ -1,5 +1,6 @@
 package org.chiches.foodrootservir.controller;
 
+import jakarta.validation.Valid;
 import org.chiches.foodrootservir.dto.TokenDto;
 import org.chiches.foodrootservir.dto.UserDto;
 import org.chiches.foodrootservir.service.AuthenticationService;
@@ -16,7 +17,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TokenDto> register(@RequestBody UserDto userDto){
+    public ResponseEntity<TokenDto> register( @RequestBody UserDto userDto){
         return ResponseEntity.ok(authenticationService.register(userDto));
     }
     @PostMapping("/refresh")
@@ -25,6 +26,7 @@ public class AuthController {
     }
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authenticate(@RequestParam String login, @RequestParam String password){
+        System.out.println("login: " + login + " password: " + password);
         return ResponseEntity.ok(authenticationService.authenticate(login, password));
     }
 }

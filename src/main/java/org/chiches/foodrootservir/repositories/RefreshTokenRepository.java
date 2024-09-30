@@ -8,4 +8,5 @@ public interface RefreshTokenRepository extends GeneralRepository<RefreshTokenEn
     void delete(RefreshTokenEntity refreshToken);
     int deleteByUserId(Long userId);
     Optional<RefreshTokenEntity> findByToken(String token);
+    Optional<RefreshTokenEntity> findByUserLogin(String login);
 }

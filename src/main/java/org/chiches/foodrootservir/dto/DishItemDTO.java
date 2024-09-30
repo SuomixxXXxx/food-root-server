@@ -1,6 +1,7 @@
 package org.chiches.foodrootservir.dto;
 
 import java.util.List;
+
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -48,6 +49,7 @@ public class DishItemDTO {
     public void setId(Long id) {
         this.id = id;
     }
+
     public CategoryDTO getCategoryDTO() {
         return categoryDTO;
     }
