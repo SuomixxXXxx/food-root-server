@@ -25,7 +25,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @OneToOne
     private RefreshTokenEntity refreshToken;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_authorities",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -103,5 +103,13 @@ public class UserEntity extends BaseEntity implements UserDetails {
 
     public void setOrders(List<OrderEntity> orders) {
         this.orders = orders;
+    }
+
+    public RefreshTokenEntity getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(RefreshTokenEntity refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
