@@ -3,10 +3,7 @@ package org.chiches.foodrootservir.controllers;
 import org.chiches.foodrootservir.dto.OrderDTO;
 import org.chiches.foodrootservir.services.OrderService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "order")
@@ -22,6 +19,20 @@ public class OrderController {
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
         ResponseEntity<OrderDTO> responseEntity;
         responseEntity = orderService.createOrder(orderDTO);
+        return responseEntity;
+    }
+
+    @GetMapping(path = "get/{id}")
+    public ResponseEntity<OrderDTO> getOrder(@PathVariable("id") Long id) {
+        ResponseEntity<OrderDTO> responseEntity;
+        responseEntity = orderService.findById(id);
+        return responseEntity;
+    }
+
+    @PatchMapping(path = "/cancel")
+    public ResponseEntity<OrderDTO> cancelOrder(OrderDTO orderDTO) {
+        ResponseEntity<OrderDTO> responseEntity;
+        responseEntity = orderService.cancelOrder(orderDTO);
         return responseEntity;
     }
 
