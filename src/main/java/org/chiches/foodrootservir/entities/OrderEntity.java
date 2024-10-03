@@ -11,8 +11,9 @@ public class OrderEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
-
     private Double fullPrice;
+
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
     private LocalDateTime dateOfCreation;
     private LocalDateTime dateOfCompletion;
@@ -40,7 +41,6 @@ public class OrderEntity extends BaseEntity {
         return status;
     }
 
-    @Enumerated(EnumType.ORDINAL)
     public void setStatus(OrderStatus status) {
         this.status = status;
     }

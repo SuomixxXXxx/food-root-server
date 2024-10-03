@@ -1,5 +1,7 @@
 package org.chiches.foodrootservir.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.chiches.foodrootservir.entities.OrderStatus;
@@ -7,11 +9,14 @@ import org.chiches.foodrootservir.entities.OrderStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderDTO {
     private Long id;
     private Double fullPrice;
     private OrderStatus status;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateOfCreation;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateOfCompletion;
     @NotNull(message = "Order content cannot be empty")
     private List<OrderContentDTO> orderContentDTOs;
