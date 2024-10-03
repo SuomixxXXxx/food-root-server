@@ -1,7 +1,9 @@
 package org.chiches.foodrootservir.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryDTO {
     @NotNull(message = "Id cannot be empty")
     private Long id;

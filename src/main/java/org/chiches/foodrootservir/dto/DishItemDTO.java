@@ -2,6 +2,7 @@ package org.chiches.foodrootservir.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +11,7 @@ import org.chiches.foodrootservir.entities.CategoryEntity;
 
 import java.util.List;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class DishItemDTO {
     @NotNull(message = "Id cannot be empty")
     private Long id;

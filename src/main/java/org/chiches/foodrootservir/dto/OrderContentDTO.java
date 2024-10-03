@@ -1,9 +1,11 @@
 package org.chiches.foodrootservir.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderContentDTO {
     @NotNull(message = "Order cannot be empty")
     private OrderDTO orderDTO;
