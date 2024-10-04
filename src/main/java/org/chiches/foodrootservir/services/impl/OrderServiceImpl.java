@@ -71,17 +71,7 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setStatus(OrderStatus.CREATED);
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
-            OrderDTO savedOrderDTO = modelMapper.map(savedOrderEntity, OrderDTO.class);
-            List<OrderContentDTO> orderContentDTOs = savedOrderEntity.getOrderContents().stream()
-                    .map(orderContentEntity -> {
-                        OrderContentDTO orderContentDTO = modelMapper.map(orderContentEntity, OrderContentDTO.class);
-                        DishItemDTO dishItemDTO = modelMapper.map(orderContentEntity.getDishItem(), DishItemDTO.class);
-                        orderContentDTO.setDishItemDTO(dishItemDTO);
-                        return orderContentDTO;
-                    })
-                    .collect(Collectors.toList());
-
-            savedOrderDTO.setOrderContentDTOs(orderContentDTOs);
+            OrderDTO savedOrderDTO = convert(savedOrderEntity);
             ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
@@ -94,17 +84,7 @@ public class OrderServiceImpl implements OrderService {
     public ResponseEntity<OrderDTO> findById(Long id) {
         OrderEntity orderEntity = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + id + " not found"));
-        OrderDTO savedOrderDTO = modelMapper.map(orderEntity, OrderDTO.class);
-        List<OrderContentDTO> orderContentDTOs = orderEntity.getOrderContents().stream()
-                .map(orderContentEntity -> {
-                    OrderContentDTO orderContentDTO = modelMapper.map(orderContentEntity, OrderContentDTO.class);
-                    DishItemDTO dishItemDTO = modelMapper.map(orderContentEntity.getDishItem(), DishItemDTO.class);
-                    orderContentDTO.setDishItemDTO(dishItemDTO);
-                    return orderContentDTO;
-                })
-                .collect(Collectors.toList());
-
-        savedOrderDTO.setOrderContentDTOs(orderContentDTOs);
+        OrderDTO savedOrderDTO = convert(orderEntity);
         ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
         return responseEntity;
     }
@@ -124,8 +104,18 @@ public class OrderServiceImpl implements OrderService {
 
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
-            OrderDTO savedOrderDTO = modelMapper.map(savedOrderEntity, OrderDTO.class);
-            List<OrderContentDTO> orderContentDTOs = savedOrderEntity.getOrderContents().stream()
+            OrderDTO savedOrderDTO = convert(savedOrderEntity);
+            ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
+            return responseEntity;
+        } catch (DataAccessException | PersistenceException e) {
+            System.out.println(e.getMessage());
+            throw new DatabaseException("The order was not canceled due to problems connecting to the database");
+        }
+    }
+
+    private OrderDTO convert(OrderEntity orderEntity) {
+        OrderDTO orderDTO = modelMapper.map(orderEntity, OrderDTO.class);
+            List<OrderContentDTO> orderContentDTOs = orderEntity.getOrderContents().stream()
                     .map(orderContentEntity -> {
                         OrderContentDTO orderContentDTO = modelMapper.map(orderContentEntity, OrderContentDTO.class);
                         DishItemDTO dishItemDTO = modelMapper.map(orderContentEntity.getDishItem(), DishItemDTO.class);
@@ -134,13 +124,8 @@ public class OrderServiceImpl implements OrderService {
                     })
                     .collect(Collectors.toList());
 
-            savedOrderDTO.setOrderContentDTOs(orderContentDTOs);
-            ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
-            return responseEntity;
-        } catch (DataAccessException | PersistenceException e) {
-            System.out.println(e.getMessage());
-            throw new DatabaseException("The order was not canceled due to problems connecting to the database");
-        }
+            orderDTO.setOrderContentDTOs(orderContentDTOs);
+        return orderDTO;
     }
 
 }

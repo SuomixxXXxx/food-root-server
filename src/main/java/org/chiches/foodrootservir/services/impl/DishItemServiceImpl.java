@@ -36,8 +36,6 @@ public class DishItemServiceImpl implements DishItemService {
                         .orElseThrow();
         dishItemEntity.setCategory(categoryEntity);
         try {
-            modelMapper.typeMap(DishItemEntity.class, DishItemDTO.class)
-                    .addMappings(mapper -> mapper.map(src -> src.getCategory(), DishItemDTO::setCategoryDTO));
             DishItemEntity savedDishItemEntity = dishItemRepository.save(dishItemEntity);
             DishItemDTO savedDishItemDTO = modelMapper.map(savedDishItemEntity, DishItemDTO.class);
             ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
@@ -51,9 +49,6 @@ public class DishItemServiceImpl implements DishItemService {
     public ResponseEntity<DishItemDTO> findById(Long id) {
         DishItemEntity dishItemEntity = dishItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dish item with id " + id + " not found"));
-        modelMapper.typeMap(DishItemEntity.class, DishItemDTO.class).addMappings(mapper -> {
-            mapper.skip(DishItemDTO::setOrderContentDTOs);
-        });
         DishItemDTO dishItemDTO = modelMapper.map(dishItemEntity, DishItemDTO.class);
         ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(dishItemDTO);
         return responseEntity;
@@ -62,9 +57,6 @@ public class DishItemServiceImpl implements DishItemService {
     @Override
     public ResponseEntity<List<DishItemDTO>> findAll() {
         List<DishItemEntity> dishItemEntities = dishItemRepository.findAll();
-        modelMapper.typeMap(DishItemEntity.class, DishItemDTO.class).addMappings(mapper -> {
-            mapper.skip(DishItemDTO::setOrderContentDTOs);
-        });
         List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
                 .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                 .toList();
