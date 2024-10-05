@@ -3,6 +3,7 @@ package org.chiches.foodrootservir.controllers;
 import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.services.DishItemService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,14 +24,14 @@ public class DishItemController {
         responseEntity = dishItemService.createDishItem(dishItemDTO);
         return responseEntity;
     }
-
+    @PreAuthorize("permitAll()")
     @GetMapping(path = "/get/{id}")
     public ResponseEntity<DishItemDTO> getDishItem(@PathVariable("id") Long id) {
         ResponseEntity<DishItemDTO> responseEntity;
         responseEntity = dishItemService.findById(id);
         return responseEntity;
     }
-
+    @PreAuthorize("authenticated")
     @GetMapping(path = "/get")
     public ResponseEntity<List<DishItemDTO>> getDishItems() {
         ResponseEntity<List<DishItemDTO>> responseEntity;
