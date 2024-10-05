@@ -26,7 +26,7 @@ public class AuthController {
     }
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authenticate(@RequestParam String login, @RequestParam String password){
-        System.out.println("login: " + login + " password: " + password);
+        //System.out.println("login: " + login + " password: " + password);
         return ResponseEntity.ok(authenticationService.authenticate(login, password));
     }
 }
