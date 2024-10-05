@@ -26,6 +26,7 @@ public class SecurityConfig {
         http.csrf(conf -> conf.disable())
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/v1/auth/**").permitAll()
+                                .requestMatchers("/dishItems/get/**").permitAll()
 //
 //                        //.requestMatchers("/api/v1/user/**").permitAll()
 //
