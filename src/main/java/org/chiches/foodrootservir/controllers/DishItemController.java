@@ -31,7 +31,7 @@ public class DishItemController {
         responseEntity = dishItemService.findById(id);
         return responseEntity;
     }
-    @PreAuthorize("authenticated")
+    @PreAuthorize("permitAll()")
     @GetMapping(path = "/get")
     public ResponseEntity<List<DishItemDTO>> getDishItems() {
         ResponseEntity<List<DishItemDTO>> responseEntity;
