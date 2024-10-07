@@ -23,4 +23,10 @@ public class StaffController {
         return responseEntity;
     }
 
+    @GetMapping(path = "getDishesReport")
+    public ResponseEntity<byte[]> getDishesReport(@RequestParam String startDate, @RequestParam String finishDate) {
+        ResponseEntity<byte[]> responseEntity = pdfService.getDishesReport(startDate, finishDate);
+        return responseEntity;
+    }
+
 }
