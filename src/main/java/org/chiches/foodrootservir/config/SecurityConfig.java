@@ -31,7 +31,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/auth/**").permitAll()
                                 .requestMatchers("/dishItems/**").permitAll()
 //
-//                        //.requestMatchers("/api/v1/user/**").permitAll()
+                        .anyRequest().permitAll()
 //
 //                        .requestMatchers("/files/**").permitAll()
 //
@@ -49,7 +49,7 @@ public class SecurityConfig {
 //                        .requestMatchers(HttpMethod.PUT,"/api/v1/admin/**").hasAuthority(ADMIN_UPDATE.name())
 //                        .requestMatchers(HttpMethod.DELETE,"/api/v1/admin/**").hasAuthority(ADMIN_DELETE.name())
 //
-                                .anyRequest().authenticated()
+//                                .anyRequest().authenticated()
 
                 )
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
