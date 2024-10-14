@@ -26,7 +26,9 @@ public class SecurityConfig {
         http.csrf(conf -> conf.disable())
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/v1/auth/**").permitAll()
-//
+                        //FIXME: NOT SUITABLE FOR REAL USAGE, DEV ONLY
+                                .anyRequest().permitAll()
+
 //                        //.requestMatchers("/api/v1/user/**").permitAll()
 //
 //                        .requestMatchers("/files/**").permitAll()
