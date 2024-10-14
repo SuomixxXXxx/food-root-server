@@ -1,5 +1,6 @@
 package org.chiches.foodrootservir.controllers;
 
+import org.chiches.foodrootservir.dto.CategoryDTO;
 import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.services.DishItemService;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,13 @@ public class DishItemController {
     public ResponseEntity<DishItemDTO> getDishItem(@PathVariable("id") Long id) {
         ResponseEntity<DishItemDTO> responseEntity;
         responseEntity = dishItemService.findById(id);
+        return responseEntity;
+    }
+
+    @GetMapping(path = "/getByCategory")
+    public ResponseEntity<List<DishItemDTO>> getAllByCategory (@RequestParam Long categoryId) {
+        ResponseEntity<List<DishItemDTO>> responseEntity;
+        responseEntity = dishItemService.getAllByCategory(categoryId);
         return responseEntity;
     }
 
