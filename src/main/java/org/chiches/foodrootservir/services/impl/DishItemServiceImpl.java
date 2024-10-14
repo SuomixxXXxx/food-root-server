@@ -1,6 +1,7 @@
 package org.chiches.foodrootservir.services.impl;
 
 import jakarta.persistence.PersistenceException;
+import org.chiches.foodrootservir.dto.CategoryDTO;
 import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.entities.CategoryEntity;
 import org.chiches.foodrootservir.entities.DishItemEntity;
@@ -83,6 +84,18 @@ public class DishItemServiceImpl implements DishItemService {
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Category was not created due to problems connecting to the database");
         }
+    }
+
+    @Override
+    public ResponseEntity<List<DishItemDTO>> getAllByCategory(Long categoryId) {
+        CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category with id " + categoryId + " not found"));
+        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByCategory(categoryEntity);
+        List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
+                .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
+                .toList();
+        ResponseEntity<List<DishItemDTO>> responseEntity = ResponseEntity.ok().body(dishItemDTOs);
+        return responseEntity;
     }
 
 }

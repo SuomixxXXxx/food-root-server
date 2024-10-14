@@ -53,7 +53,7 @@ public class PdfServiceImpl implements PdfService {
         PdfDocument pdfDocument = new PdfDocument(pdfWriter);
         Document document = new Document(pdfDocument);
         try {
-            PdfFont font = PdfFontFactory.createFont("/Users/mocustocus/Downloads/ofont.ru_Times New Roman.ttf", PdfEncodings.IDENTITY_H);
+            PdfFont font = PdfFontFactory.createFont("Times_New_Roman.ttf", PdfEncodings.IDENTITY_H);
             document.setFont(font);
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,7 +97,7 @@ public class PdfServiceImpl implements PdfService {
         PdfDocument pdfDocument = new PdfDocument(pdfWriter);
         Document document = new Document(pdfDocument);
         try {
-            PdfFont font = PdfFontFactory.createFont("/Users/mocustocus/Downloads/ofont.ru_Times New Roman.ttf", PdfEncodings.IDENTITY_H);
+            PdfFont font = PdfFontFactory.createFont("Times_New_Roman.ttf", PdfEncodings.IDENTITY_H);
             document.setFont(font);
         } catch (IOException e) {
             e.printStackTrace();
