@@ -1,21 +1,39 @@
 package org.chiches.foodrootservir.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.converter.DefaultContentTypeResolver;
+import org.springframework.messaging.converter.MappingJackson2MessageConverter;
+import org.springframework.messaging.converter.MessageConverter;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.socket.config.annotation.*;
 
+import java.util.List;
+
 @Configuration
-@EnableWebSocket
-public class WebSocketConfig implements WebSocketConfigurer {
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
-    private final OrderWebSocketHandler orderWebSocketHandler;
-
-    public WebSocketConfig(OrderWebSocketHandler orderWebSocketHandler) {
-        this.orderWebSocketHandler = orderWebSocketHandler;
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry registry) {
+        registry.enableSimpleBroker("/topic");
+        registry.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
-    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(orderWebSocketHandler, "ws/orders").setAllowedOrigins("*");
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/helloo")
+                .setAllowedOrigins("*");
     }
+//    @Override
+//    public boolean configureMessageConverters(List<MessageConverter> messageConverters) {
+//        DefaultContentTypeResolver resolver = new DefaultContentTypeResolver();
+//        resolver.setDefaultMimeType(MimeTypeUtils.APPLICATION_JSON);
+//        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+//        converter.setObjectMapper(new ObjectMapper());
+//        converter.setContentTypeResolver(resolver);
+//        messageConverters.add(converter);
+//        return false;
+//    }
 }

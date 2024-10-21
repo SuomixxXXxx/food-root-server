@@ -11,7 +11,9 @@ public class TokenDto {
         this.token = token;
         this.refreshToken = refreshToken;
     }
+    public TokenDto() {
 
+    }
     public String getToken() {
         return token;
     }

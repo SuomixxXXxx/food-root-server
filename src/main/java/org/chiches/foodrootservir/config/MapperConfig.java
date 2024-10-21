@@ -13,7 +13,8 @@ public class MapperConfig {
         ModelMapper modelMapper = new ModelMapper();
 
         modelMapper.typeMap(DishItemEntity.class, DishItemDTO.class)
-                .addMappings(mapper -> mapper.map(DishItemEntity::getCategory, DishItemDTO::setCategoryDTO))
+                //FIXME: causes bug that he cant retrieve category name, dunno so here we are
+                //.addMappings(mapper -> mapper.map(DishItemEntity::getCategory, DishItemDTO::setCategoryDTO))
                 .addMappings(mapper -> mapper.skip(DishItemDTO::setOrderContentDTOs));
         
         return modelMapper;
