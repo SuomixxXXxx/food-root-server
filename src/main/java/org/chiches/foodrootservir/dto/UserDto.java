@@ -26,6 +26,9 @@ public class UserDto {
         this.login = login;
         this.password = password;
     }
+    public UserDto() {
+
+    }
 
     public String getName() {
         return name;

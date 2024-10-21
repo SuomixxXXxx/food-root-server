@@ -8,7 +8,7 @@ import java.util.List;
 @Table(name = "dish_items")
 public class DishItemEntity extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 

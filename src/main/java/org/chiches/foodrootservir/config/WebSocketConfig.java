@@ -17,13 +17,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic");
-        registry.setApplicationDestinationPrefixes("/app");
+        registry.enableSimpleBroker("/dishSub");
+        registry.setApplicationDestinationPrefixes("/dishActive");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/helloo")
+        registry.addEndpoint("/dish")
                 .setAllowedOrigins("*");
     }
 //    @Override

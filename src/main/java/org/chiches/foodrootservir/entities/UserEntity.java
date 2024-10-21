@@ -64,6 +64,10 @@ public class UserEntity extends BaseEntity implements UserDetails {
         return authorities;
     }
 
+    public void setAuthorities(List<AuthorityEntity> authorities) {
+        this.authorities = authorities;
+    }
+
     public String getPassword() {
         return password;
     }
