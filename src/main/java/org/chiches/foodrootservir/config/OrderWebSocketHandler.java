@@ -12,7 +12,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Deprecated
 @Component
 public class OrderWebSocketHandler extends TextWebSocketHandler {
 
