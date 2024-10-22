@@ -48,12 +48,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public ResponseEntity<OrderDTO> createOrder(OrderDTO orderDTO) {
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setOrderContents(new ArrayList<>());
+        List<OrderContentEntity> orderContentEntities = new ArrayList<>();
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userEntity = userRepository.findByLogin(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User with login " + userDetails.getUsername() + " not found"));
-        orderEntity.setUser(userEntity);
         Double price = 0d;
         for (OrderContentDTO orderContentDTO : orderDTO.getOrderContentDTOs()) {
             Long dishItemId = orderContentDTO.getDishItemDTO().getId();
@@ -62,17 +60,23 @@ public class OrderServiceImpl implements OrderService {
             if (dishItemEntity.getQuantity() < orderContentDTO.getQuantity()) {
                 throw new NotEnoughStockException("Not enough stock for " + dishItemEntity.getName());
             }
-            OrderContentEntity orderContentEntity = new OrderContentEntity();
-            orderContentEntity.setOrder(orderEntity);
-            orderContentEntity.setDishItem(dishItemEntity);
-            orderContentEntity.setQuantity(orderContentDTO.getQuantity());
-            orderEntity.getOrderContents().add(orderContentEntity);
+            OrderContentEntity orderContentEntity = new OrderContentEntity(
+                    dishItemEntity,
+                    orderContentDTO.getQuantity()
+            );
+            orderContentEntities.add(orderContentEntity);
             price += dishItemEntity.getPrice() * orderContentEntity.getQuantity();
         }
         price = Math.floor(price * 100) / 100;
-        orderEntity.setFullPrice(price);
-        orderEntity.setDateOfCreation(LocalDateTime.now());
-        orderEntity.setStatus(OrderStatus.CREATED);
+        OrderEntity orderEntity = new OrderEntity(userEntity,
+                OrderStatus.CREATED,
+                price,
+                LocalDateTime.now(),
+                orderContentEntities);
+        //TODO: говно переделать картошка
+        for (OrderContentEntity orderContentEntity : orderEntity.getOrderContents()) {
+            orderContentEntity.setOrder(orderEntity);
+        }
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
             OrderDTO savedOrderDTO = convert(savedOrderEntity);

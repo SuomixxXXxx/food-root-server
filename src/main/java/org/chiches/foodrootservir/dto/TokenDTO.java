@@ -1,13 +1,11 @@
 package org.chiches.foodrootservir.dto;
 
-import jakarta.validation.constraints.NotBlank;
-
-public class TokenDto {
+public class TokenDTO {
     // не нужно тк такое только на выходе
     private String token;
     private String refreshToken;
 
-    public TokenDto(String token, String refreshToken) {
+    public TokenDTO(String token, String refreshToken) {
         this.token = token;
         this.refreshToken = refreshToken;
     }

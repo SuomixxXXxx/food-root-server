@@ -35,6 +35,16 @@ public class UserEntity extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<OrderEntity> orders;
 
+    protected UserEntity() {
+    }
+
+    public UserEntity(String login, String password, String name, String surname) {
+        this.login = login;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+    }
+
     public String getName() {
         return name;
     }
