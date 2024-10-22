@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public class UserDto {
+public class UserDTO {
     @NotBlank(message = "Name cannot be empty")
     @Size(min = 2, max = 30, message = "Name must be between 2 and 30 characters")
     private String name;
@@ -20,7 +20,7 @@ public class UserDto {
     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]+$", message = "Password must contain at least one uppercase letter, one lowercase letter and one number")
     private String password;
 
-    public UserDto(String name, String surname, String login, String password) {
+    public UserDTO(String name, String surname, String login, String password) {
         this.name = name;
         this.surname = surname;
         this.login = login;

@@ -1,6 +1,7 @@
 package org.chiches.foodrootservir.services.impl;
 
 import jakarta.persistence.PersistenceException;
+import org.chiches.foodrootservir.config.OrderWebSocketHandler;
 import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.dto.OrderContentDTO;
 import org.chiches.foodrootservir.dto.OrderDTO;
@@ -16,6 +17,7 @@ import org.chiches.foodrootservir.services.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -33,23 +35,23 @@ public class OrderServiceImpl implements OrderService {
     private final ModelMapper modelMapper;
     private final DishItemRepository dishItemRepository;
     private final UserRepository userRepository;
+    private final OrderWebSocketHandler orderWebSocketHandler;
 
-    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper modelMapper, DishItemRepository dishItemRepository, UserRepository userRepository) {
+    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper modelMapper, DishItemRepository dishItemRepository, UserRepository userRepository, OrderWebSocketHandler orderWebSocketHandler) {
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
         this.dishItemRepository = dishItemRepository;
         this.userRepository = userRepository;
+        this.orderWebSocketHandler = orderWebSocketHandler;
     }
 
     @Override
     @Transactional
     public ResponseEntity<OrderDTO> createOrder(OrderDTO orderDTO) {
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setOrderContents(new ArrayList<>());
+        List<OrderContentEntity> orderContentEntities = new ArrayList<>();
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userEntity = userRepository.findByLogin(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User with login " + userDetails.getUsername() + " not found"));
-        orderEntity.setUser(userEntity);
         Double price = 0d;
         for (OrderContentDTO orderContentDTO : orderDTO.getOrderContentDTOs()) {
             Long dishItemId = orderContentDTO.getDishItemDTO().getId();
@@ -58,21 +60,31 @@ public class OrderServiceImpl implements OrderService {
             if (dishItemEntity.getQuantity() < orderContentDTO.getQuantity()) {
                 throw new NotEnoughStockException("Not enough stock for " + dishItemEntity.getName());
             }
-            OrderContentEntity orderContentEntity = new OrderContentEntity();
-            orderContentEntity.setOrder(orderEntity);
-            orderContentEntity.setDishItem(dishItemEntity);
-            orderContentEntity.setQuantity(orderContentDTO.getQuantity());
-            orderEntity.getOrderContents().add(orderContentEntity);
+            OrderContentEntity orderContentEntity = new OrderContentEntity(
+                    dishItemEntity,
+                    orderContentDTO.getQuantity()
+            );
+            orderContentEntities.add(orderContentEntity);
             price += dishItemEntity.getPrice() * orderContentEntity.getQuantity();
         }
         price = Math.floor(price * 100) / 100;
-        orderEntity.setFullPrice(price);
-        orderEntity.setDateOfCreation(LocalDateTime.now());
-        orderEntity.setStatus(OrderStatus.CREATED);
+        OrderEntity orderEntity = new OrderEntity(userEntity,
+                OrderStatus.CREATED,
+                price,
+                LocalDateTime.now(),
+                orderContentEntities);
+        //TODO: говно переделать картошка
+        for (OrderContentEntity orderContentEntity : orderEntity.getOrderContents()) {
+            orderContentEntity.setOrder(orderEntity);
+        }
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
             OrderDTO savedOrderDTO = convert(savedOrderEntity);
             ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
+            List<OrderDTO> activeOrders = orderRepository.findByStatus(OrderStatus.CREATED).stream()
+                    .map(this::convert)
+                    .collect(Collectors.toList());
+            orderWebSocketHandler.updateOrdersList(activeOrders);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
             System.out.println(e.getMessage());

@@ -31,10 +31,11 @@ public class RefreshTokenService {
         if (refreshTokenEntity.isPresent()){
             refreshTokenRepository.delete(refreshTokenEntity.get());
         }
-        RefreshTokenEntity refreshToken = new RefreshTokenEntity();
-        refreshToken.setExpiryDate(Instant.now().plusMillis(expirationTime));
-        refreshToken.setUser(userRepository.findByLogin(login).get());
-        refreshToken.setToken(UUID.randomUUID().toString());
+        RefreshTokenEntity refreshToken = new RefreshTokenEntity(
+                userRepository.findByLogin(login).get(),
+                UUID.randomUUID().toString(),
+                Instant.now().plusMillis(expirationTime)
+        );
         refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }

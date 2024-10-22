@@ -1,31 +1,30 @@
-package org.chiches.foodrootservir.controller;
+package org.chiches.foodrootservir.controllers;
 
-import jakarta.validation.Valid;
-import org.chiches.foodrootservir.dto.TokenDto;
-import org.chiches.foodrootservir.dto.UserDto;
-import org.chiches.foodrootservir.service.AuthenticationService;
+import org.chiches.foodrootservir.dto.TokenDTO;
+import org.chiches.foodrootservir.dto.UserDTO;
+import org.chiches.foodrootservir.services.impl.AuthenticationServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
-    private final AuthenticationService authenticationService;
+    private final AuthenticationServiceImpl authenticationService;
 
-    public AuthController(AuthenticationService authenticationService) {
+    public AuthController(AuthenticationServiceImpl authenticationService) {
         this.authenticationService = authenticationService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<TokenDto> register( @RequestBody UserDto userDto){
+    public ResponseEntity<TokenDTO> register(@RequestBody UserDTO userDto){
         return ResponseEntity.ok(authenticationService.register(userDto));
     }
     @PostMapping("/refresh")
-    public ResponseEntity<TokenDto> refresh(@RequestParam String refreshToken){
+    public ResponseEntity<TokenDTO> refresh(@RequestParam String refreshToken){
         return ResponseEntity.ok(authenticationService.refresh(refreshToken));
     }
     @PostMapping("/authenticate")
-    public ResponseEntity<TokenDto> authenticate(@RequestParam String login, @RequestParam String password){
+    public ResponseEntity<TokenDTO> authenticate(@RequestParam String login, @RequestParam String password){
         System.out.println("login: " + login + " password: " + password);
         return ResponseEntity.ok(authenticationService.authenticate(login, password));
     }

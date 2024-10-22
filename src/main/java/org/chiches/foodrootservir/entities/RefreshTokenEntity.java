@@ -15,6 +15,15 @@ public class RefreshTokenEntity  extends BaseEntity{
     private String token;
     private Instant expiryDate;
 
+    protected RefreshTokenEntity() {
+    }
+
+    public RefreshTokenEntity(UserEntity user, String token, Instant expiryDate) {
+        this.user = user;
+        this.token = token;
+        this.expiryDate = expiryDate;
+    }
+
     public UserEntity getUser() {
         return user;
     }

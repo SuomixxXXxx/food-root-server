@@ -20,6 +20,17 @@ public class DishItemEntity extends BaseEntity {
     @OneToMany(mappedBy = "dishItem", fetch = FetchType.LAZY)
     private List<OrderContentEntity> orderContents;
 
+    protected DishItemEntity() {
+    }
+
+    public DishItemEntity(CategoryEntity category, String name, Double weight, Double price, Integer quantity) {
+        this.category = category;
+        this.name = name;
+        this.weight = weight;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
     public CategoryEntity getCategory() {
         return category;
     }

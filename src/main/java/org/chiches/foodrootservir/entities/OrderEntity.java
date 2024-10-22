@@ -21,6 +21,17 @@ public class OrderEntity extends BaseEntity {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<OrderContentEntity> orderContents;
 
+    protected OrderEntity() {
+    }
+
+    public OrderEntity(UserEntity user, OrderStatus status, Double fullPrice, LocalDateTime dateOfCreation, List<OrderContentEntity> orderContents) {
+        this.user = user;
+        this.status = status;
+        this.fullPrice = fullPrice;
+        this.dateOfCreation = dateOfCreation;
+        this.orderContents = orderContents;
+    }
+
     public UserEntity getUser() {
         return user;
     }

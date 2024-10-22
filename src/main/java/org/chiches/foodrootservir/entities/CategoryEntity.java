@@ -12,6 +12,13 @@ public class CategoryEntity extends BaseEntity {
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<DishItemEntity> dishItems;
 
+    protected CategoryEntity() {
+    }
+
+    public CategoryEntity(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
