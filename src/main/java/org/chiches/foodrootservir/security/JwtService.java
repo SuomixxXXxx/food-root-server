@@ -24,13 +24,20 @@ public class JwtService {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         if (userDetails instanceof UserEntity customUserDetails) {
-            claims.put("login", customUserDetails.getLogin());
+            //claims.put("login", customUserDetails.getLogin());
+            claims.put("role", customUserDetails.getAuthorities()
+                    .stream()
+                    .map(authority -> authority.getAuthority())
+                    .toArray()
+            );
         }
         return generateToken(claims, userDetails);
     }
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (1000l * 60l * 30l))) // half an hour
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
