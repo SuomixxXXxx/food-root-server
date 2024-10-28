@@ -1,7 +1,6 @@
 package org.chiches.foodrootservir.services.impl;
 
 import jakarta.persistence.PersistenceException;
-import org.chiches.foodrootservir.config.OrderWebSocketHandler;
 import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.dto.OrderContentDTO;
 import org.chiches.foodrootservir.dto.OrderDTO;
@@ -35,14 +34,15 @@ public class OrderServiceImpl implements OrderService {
     private final ModelMapper modelMapper;
     private final DishItemRepository dishItemRepository;
     private final UserRepository userRepository;
-    private final OrderWebSocketHandler orderWebSocketHandler;
+    //private final OrderWebSocketHandler orderWebSocketHandler;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
-    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper modelMapper, DishItemRepository dishItemRepository, UserRepository userRepository, OrderWebSocketHandler orderWebSocketHandler) {
+    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper modelMapper, DishItemRepository dishItemRepository, UserRepository userRepository, SimpMessagingTemplate simpMessagingTemplate) {
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
         this.dishItemRepository = dishItemRepository;
         this.userRepository = userRepository;
-        this.orderWebSocketHandler = orderWebSocketHandler;
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
     @Override
@@ -84,7 +84,9 @@ public class OrderServiceImpl implements OrderService {
             List<OrderDTO> activeOrders = orderRepository.findByStatus(OrderStatus.CREATED).stream()
                     .map(this::convert)
                     .collect(Collectors.toList());
-            orderWebSocketHandler.updateOrdersList(activeOrders);
+//            orderWebSocketHandler.updateOrdersList(activeOrders);
+
+            simpMessagingTemplate.convertAndSend("/ordersub/active-orders", ResponseEntity.ok(activeOrders));
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
             System.out.println(e.getMessage());
@@ -99,6 +101,15 @@ public class OrderServiceImpl implements OrderService {
         OrderDTO savedOrderDTO = convert(orderEntity);
         ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
         return responseEntity;
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<?> findAllActive() {
+        List<OrderDTO> activeOrders = orderRepository.findByStatus(OrderStatus.CREATED).stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(activeOrders);
     }
 
     @Override

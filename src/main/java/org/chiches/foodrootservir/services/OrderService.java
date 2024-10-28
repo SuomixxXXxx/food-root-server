@@ -11,4 +11,6 @@ public interface OrderService {
     public ResponseEntity<OrderDTO> updateOrderStatus(OrderDTO orderDTO);
 
     public ResponseEntity<OrderDTO> findById(Long id);
+
+    public ResponseEntity<?> findAllActive();
 }

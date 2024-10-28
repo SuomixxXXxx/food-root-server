@@ -14,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -56,6 +57,7 @@ public class DishItemServiceImpl implements DishItemService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<List<DishItemDTO>> findAll() {
         List<DishItemEntity> dishItemEntities = dishItemRepository.findAll();
         List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
