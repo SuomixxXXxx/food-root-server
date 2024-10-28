@@ -72,10 +72,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public TokenDTO refresh(String refreshToken){
         RefreshTokenEntity refreshTokenEntity = refreshTokenService.verifyExpiration(refreshTokenService.findByToken(refreshToken).orElseThrow());
         //todo: catch and all of that
+        if (refreshTokenEntity == null){
+            throw new IllegalArgumentException("Refresh token is expired");
+        }
+
 
         UserEntity userEntity = refreshTokenEntity.getUser();
         String token = jwtService.generateToken(userEntity);
-
+        refreshTokenService.extendToken(refreshTokenEntity);
         return new TokenDTO(token, refreshToken);
     }
 }

@@ -13,8 +13,8 @@ import java.util.UUID;
 
 @Service
 public class RefreshTokenService {
-    //@Value("${jwt.refreshTokenExpiration}")
-    private long expirationTime = 1000000;
+    @Value("${jwt.refreshTokenExpiration}")
+    private long expirationTime;
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -54,15 +54,15 @@ public class RefreshTokenService {
         return refreshToken;
     }
 
-    public boolean extendTokenByUsername(String username) {
-        UserEntity user = userRepository.findByLogin(username).orElseThrow();
+    public boolean extendToken(RefreshTokenEntity refreshTokenEntity) {
   //TODO: IMPLEMENT EXTEND TOKEN
-
-//        if () {
-//            refreshToken.get().setExpiryDate(Instant.now().plusMillis(expirationTime));
-//            refreshTokenRepository.save(refreshToken.get());
-//            return true;
-//        }
+        if (verifyExpiration(refreshTokenEntity) != null) {
+            System.out.println("Token was: " + refreshTokenEntity.getExpiryDate());
+            refreshTokenEntity.setExpiryDate(Instant.now().plusMillis(expirationTime));
+            refreshTokenRepository.save(refreshTokenEntity);
+            System.out.println("Token now: " + refreshTokenEntity.getExpiryDate());
+            return true;
+        }
         return false;
     }
 
