@@ -73,7 +73,6 @@ public class OrderServiceImpl implements OrderService {
                 price,
                 LocalDateTime.now(),
                 orderContentEntities);
-        //TODO: говно переделать картошка
         for (OrderContentEntity orderContentEntity : orderEntity.getOrderContents()) {
             orderContentEntity.setOrder(orderEntity);
         }
