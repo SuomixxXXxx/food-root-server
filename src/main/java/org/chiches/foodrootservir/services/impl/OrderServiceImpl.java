@@ -81,12 +81,9 @@ public class OrderServiceImpl implements OrderService {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
             OrderDTO savedOrderDTO = convert(savedOrderEntity);
             ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
-            List<OrderDTO> activeOrders = orderRepository.findByStatus(OrderStatus.CREATED).stream()
-                    .map(this::convert)
-                    .collect(Collectors.toList());
-//            orderWebSocketHandler.updateOrdersList(activeOrders);
 
-            simpMessagingTemplate.convertAndSend("/ordersub/active-orders", ResponseEntity.ok(activeOrders));
+            notifyWebSocketClients();
+
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
             System.out.println(e.getMessage());
@@ -113,6 +110,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional
     public ResponseEntity<OrderDTO> updateOrderStatus(OrderDTO orderDTO) {
         OrderEntity orderEntity = orderRepository.findById(orderDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderDTO.getId() + " not found"));
@@ -129,6 +127,9 @@ public class OrderServiceImpl implements OrderService {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
             OrderDTO savedOrderDTO = convert(savedOrderEntity);
             ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
+
+            notifyWebSocketClients();
+
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
             System.out.println(e.getMessage());
@@ -151,4 +152,10 @@ public class OrderServiceImpl implements OrderService {
         return orderDTO;
     }
 
+    private void notifyWebSocketClients() {
+        List<OrderDTO> activeOrders = orderRepository.findByStatus(OrderStatus.CREATED).stream()
+                .map(this::convert)
+                .collect(Collectors.toList());
+        simpMessagingTemplate.convertAndSend("/ordersub/active-orders", ResponseEntity.ok(activeOrders));
+    }
 }
