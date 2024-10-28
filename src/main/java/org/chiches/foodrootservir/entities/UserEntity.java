@@ -23,6 +23,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     private boolean isEnabled = true;
 
     @OneToOne
+    @JoinColumn(name = "refresh_token_id", referencedColumnName = "id")
     private RefreshTokenEntity refreshToken;
 
     @ManyToMany(fetch = FetchType.EAGER)

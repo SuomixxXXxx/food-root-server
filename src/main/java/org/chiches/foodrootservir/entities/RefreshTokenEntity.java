@@ -9,8 +9,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "refresh_tokens")
 public class RefreshTokenEntity  extends BaseEntity{
-    @OneToOne
-    //@JoinColumn(name = "user_id")
+    @OneToOne(mappedBy = "refreshToken")
     private UserEntity user;
     private String token;
     private Instant expiryDate;

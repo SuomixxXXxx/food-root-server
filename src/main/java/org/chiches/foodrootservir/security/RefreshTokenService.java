@@ -25,18 +25,24 @@ public class RefreshTokenService {
     }
 
     public RefreshTokenEntity createRefreshToken(String login) {
-//        UserEntity user = userRepository.findByLogin(login).orElseThrow();
+        UserEntity user = userRepository.findByLogin(login).orElseThrow();
 //        refreshTokenRepository.delete(user.getRefreshToken());
-        Optional<RefreshTokenEntity>  refreshTokenEntity= refreshTokenRepository.findByUserLogin(login);
-        if (refreshTokenEntity.isPresent()){
-            refreshTokenRepository.delete(refreshTokenEntity.get());
+        RefreshTokenEntity refreshTokenEntity = user.getRefreshToken();
+
+        if (refreshTokenEntity != null) {
+            refreshTokenRepository.delete(refreshTokenEntity);
         }
+
         RefreshTokenEntity refreshToken = new RefreshTokenEntity(
-                userRepository.findByLogin(login).get(),
+                user,
                 UUID.randomUUID().toString(),
                 Instant.now().plusMillis(expirationTime)
         );
         refreshTokenRepository.save(refreshToken);
+
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
+
         return refreshToken;
     }
 
@@ -46,6 +52,18 @@ public class RefreshTokenService {
             return null;
         }
         return refreshToken;
+    }
+
+    public boolean extendTokenByUsername(String username) {
+        UserEntity user = userRepository.findByLogin(username).orElseThrow();
+  //TODO: IMPLEMENT EXTEND TOKEN
+
+//        if () {
+//            refreshToken.get().setExpiryDate(Instant.now().plusMillis(expirationTime));
+//            refreshTokenRepository.save(refreshToken.get());
+//            return true;
+//        }
+        return false;
     }
 
     public int deleteByUserId(Long userId) {
