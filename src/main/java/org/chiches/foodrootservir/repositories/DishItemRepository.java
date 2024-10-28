@@ -12,6 +12,5 @@ import java.util.List;
 public interface DishItemRepository extends GeneralRepository<DishItemEntity, Long> {
     List<DishItemEntity> findAllByCategory(CategoryEntity categoryEntity);
 
-    @Query("SELECT d FROM DishItemEntity d WHERE LOWER(d.name) LIKE LOWER(CONCAT('%', :name, '%'))")
-    List<DishItemEntity> findAllByNameContainingIgnoreCase(@RequestParam String name);
+    List<DishItemEntity> findAllByNameContainingIgnoreCase(String name);
 }
