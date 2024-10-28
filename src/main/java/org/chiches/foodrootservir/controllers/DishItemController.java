@@ -53,4 +53,11 @@ public class DishItemController {
         return responseEntity;
     }
 
+    @GetMapping(path = "/getByName")
+    public ResponseEntity<List<DishItemDTO>> getAllByName(@RequestParam String name) {
+        ResponseEntity<List<DishItemDTO>> responseEntity;
+        responseEntity = dishItemService.getAllByName(name);
+        return responseEntity;
+    }
+
 }

@@ -18,4 +18,6 @@ public interface DishItemService {
 
     ResponseEntity<List<DishItemDTO>> getAllByCategory(Long categoryId);
 
+    ResponseEntity<List<DishItemDTO>> getAllByName(String name);
+
 }
