@@ -102,7 +102,7 @@ public class DishItemServiceImpl implements DishItemService {
 
     @Override
     public ResponseEntity<List<DishItemDTO>> getAllByName(String name) {
-        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCase(name);
+        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCase(name.strip());
         List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
                 .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                 .toList();
