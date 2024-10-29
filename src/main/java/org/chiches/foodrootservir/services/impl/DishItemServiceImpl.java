@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -102,10 +103,13 @@ public class DishItemServiceImpl implements DishItemService {
 
     @Override
     public ResponseEntity<List<DishItemDTO>> getAllByName(String name) {
-        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCase(name.strip());
-        List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
-                .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
-                .toList();
+        List<DishItemDTO> dishItemDTOs = new ArrayList<>();
+        if (!name.isBlank()) {
+            List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCase(name.strip());
+            dishItemDTOs = dishItemEntities.stream()
+                    .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
+                    .toList();
+        }
         ResponseEntity<List<DishItemDTO>> responseEntity = ResponseEntity.ok().body(dishItemDTOs);
         return responseEntity;
     }
