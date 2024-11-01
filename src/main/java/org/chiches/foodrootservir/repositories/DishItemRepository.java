@@ -11,9 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface DishItemRepository extends GeneralRepository<DishItemEntity, Long> {
-    List<DishItemEntity> findAllByCategory(CategoryEntity categoryEntity);
-
-    List<DishItemEntity> findAllByNameContainingIgnoreCase(String name);
 
     List<DishItemEntity> findAllByCategoryAndIsDeletedFalse(CategoryEntity categoryEntity);
 

@@ -94,7 +94,7 @@ public class DishItemServiceImpl implements DishItemService {
     public ResponseEntity<List<DishItemDTO>> getAllByCategory(Long categoryId) {
         CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + categoryId + " not found"));
-        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByCategory(categoryEntity);
+        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByCategoryAndIsDeletedFalse(categoryEntity);
         List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
                 .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                 .toList();
@@ -106,7 +106,7 @@ public class DishItemServiceImpl implements DishItemService {
     public ResponseEntity<List<DishItemDTO>> getAllByName(String name) {
         List<DishItemDTO> dishItemDTOs = new ArrayList<>();
         if (!name.isBlank()) {
-            List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCase(name.strip());
+            List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCaseAndIsDeletedFalse(name.strip());
             dishItemDTOs = dishItemEntities.stream()
                     .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                     .toList();
