@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -49,8 +50,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity<List<CategoryDTO>> findAll() {
-        List<CategoryEntity> categoryEntities = categoryRepository.findAll();
+    public ResponseEntity<List<CategoryDTO>> findAll(boolean active) {
+        List<CategoryEntity> categoryEntities;
+        if (active) {
+            categoryEntities = categoryRepository.findAllByDishItemsIsNotEmpty();
+
+        } else {
+            categoryEntities = categoryRepository.findAll();
+        }
         List<CategoryDTO> categoryDTOs = categoryEntities.stream()
                 .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
                 .toList();
