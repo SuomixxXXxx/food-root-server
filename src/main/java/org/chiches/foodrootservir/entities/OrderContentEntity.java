@@ -19,9 +19,10 @@ public class OrderContentEntity extends BaseEntity {
     protected OrderContentEntity() {
     }
 
-    public OrderContentEntity(DishItemEntity dishItem, Integer quantity) {
+    public OrderContentEntity(DishItemEntity dishItem, Integer quantity, OrderEntity order) {
         this.quantity = quantity;
         this.dishItem = dishItem;
+        this.order = order;
     }
 
     public OrderEntity getOrder() {

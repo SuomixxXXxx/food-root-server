@@ -7,7 +7,6 @@ import org.chiches.foodrootservir.dto.OrderDTO;
 import org.chiches.foodrootservir.entities.*;
 import org.chiches.foodrootservir.exceptions.DatabaseException;
 import org.chiches.foodrootservir.exceptions.InvalidArgumentException;
-import org.chiches.foodrootservir.exceptions.NotEnoughStockException;
 import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
 import org.chiches.foodrootservir.repositories.DishItemRepository;
 import org.chiches.foodrootservir.repositories.OrderRepository;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,33 +46,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public ResponseEntity<OrderDTO> createOrder(OrderDTO orderDTO) {
-        List<OrderContentEntity> orderContentEntities = new ArrayList<>();
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userEntity = userRepository.findByLogin(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User with login " + userDetails.getUsername() + " not found"));
-        Double price = 0d;
+        OrderEntity orderEntity = new OrderEntity(userEntity);
         for (OrderContentDTO orderContentDTO : orderDTO.getOrderContentDTOs()) {
             Long dishItemId = orderContentDTO.getDishItemDTO().getId();
             DishItemEntity dishItemEntity = dishItemRepository.findById(dishItemId)
                     .orElseThrow(() -> new ResourceNotFoundException("Dish item with id " + dishItemId + " not found"));
-            if (dishItemEntity.getQuantity() < orderContentDTO.getQuantity()) {
-                throw new NotEnoughStockException("Not enough stock for " + dishItemEntity.getName());
-            }
-            OrderContentEntity orderContentEntity = new OrderContentEntity(
-                    dishItemEntity,
-                    orderContentDTO.getQuantity()
-            );
-            orderContentEntities.add(orderContentEntity);
-            price += dishItemEntity.getPrice() * orderContentEntity.getQuantity();
-        }
-        price = Math.floor(price * 100) / 100;
-        OrderEntity orderEntity = new OrderEntity(userEntity,
-                OrderStatus.CREATED,
-                price,
-                LocalDateTime.now(),
-                orderContentEntities);
-        for (OrderContentEntity orderContentEntity : orderEntity.getOrderContents()) {
-            orderContentEntity.setOrder(orderEntity);
+            orderEntity.setOrderContent(dishItemEntity, orderContentDTO.getQuantity());
         }
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
@@ -110,18 +90,10 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public ResponseEntity<OrderDTO> updateOrderStatus(OrderDTO orderDTO) {
-        OrderEntity orderEntity = orderRepository.findById(orderDTO.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Order with id " + orderDTO.getId() + " not found"));
-        if (orderDTO.getStatus().equals(OrderStatus.CANCELED)) {
-            orderEntity.setStatus(OrderStatus.CANCELED);
-        } else if (orderDTO.getStatus().equals(OrderStatus.COMPLETED)) {
-            orderEntity.setStatus(OrderStatus.COMPLETED);
-            orderEntity.setDateOfCompletion(LocalDateTime.now());
-        } else {
-            throw new InvalidArgumentException("Invalid order status");
-        }
-
+    public ResponseEntity<OrderDTO> updateOrderStatus(Long id, OrderStatus orderStatus) {
+        OrderEntity orderEntity = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order with id " + id + " not found"));
+        orderEntity.changeStatus(orderStatus);
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
             OrderDTO savedOrderDTO = convert(savedOrderEntity);

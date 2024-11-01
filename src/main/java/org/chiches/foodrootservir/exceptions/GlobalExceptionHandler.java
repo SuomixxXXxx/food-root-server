@@ -1,6 +1,8 @@
 package org.chiches.foodrootservir.exceptions;
 
 import org.chiches.foodrootservir.dto.ExceptionResponse;
+import org.chiches.foodrootservir.exceptions.order.NotEnoughStockException;
+import org.chiches.foodrootservir.exceptions.order.OrderException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -43,8 +45,8 @@ public class GlobalExceptionHandler {
         return responseEntity;
     }
 
-    @ExceptionHandler(NotEnoughStockException.class)
-    public ResponseEntity<ExceptionResponse> catchNotEnoughStockException(NotEnoughStockException e) {
+    @ExceptionHandler(OrderException.class)
+    public ResponseEntity<ExceptionResponse> catchOrderException(OrderException e) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(e.getMessage());
         ResponseEntity<ExceptionResponse> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
         return responseEntity;
