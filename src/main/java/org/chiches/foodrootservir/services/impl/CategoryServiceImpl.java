@@ -53,7 +53,7 @@ public class CategoryServiceImpl implements CategoryService {
     public ResponseEntity<List<CategoryDTO>> findAll(boolean active) {
         List<CategoryEntity> categoryEntities;
         if (active) {
-            categoryEntities = categoryRepository.findAllByDishItemsIsNotEmpty();
+            categoryEntities = categoryRepository.findAllNotDeleted();
 
         } else {
             categoryEntities = categoryRepository.findAll();
