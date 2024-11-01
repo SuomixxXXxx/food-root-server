@@ -12,6 +12,7 @@ import org.chiches.foodrootservir.repositories.DishItemRepository;
 import org.chiches.foodrootservir.services.DishItemService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +86,7 @@ public class DishItemServiceImpl implements DishItemService {
             ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
-            throw new DatabaseException("Category was not created due to problems connecting to the database");
+            throw new DatabaseException("Dish item was not updated due to problems connecting to the database");
         }
     }
 
@@ -93,7 +94,7 @@ public class DishItemServiceImpl implements DishItemService {
     public ResponseEntity<List<DishItemDTO>> getAllByCategory(Long categoryId) {
         CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + categoryId + " not found"));
-        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByCategory(categoryEntity);
+        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByCategoryAndIsDeletedFalse(categoryEntity);
         List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
                 .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                 .toList();
@@ -105,13 +106,25 @@ public class DishItemServiceImpl implements DishItemService {
     public ResponseEntity<List<DishItemDTO>> getAllByName(String name) {
         List<DishItemDTO> dishItemDTOs = new ArrayList<>();
         if (!name.isBlank()) {
-            List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCase(name.strip());
+            List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCaseAndIsDeletedFalse(name.strip());
             dishItemDTOs = dishItemEntities.stream()
                     .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                     .toList();
         }
         ResponseEntity<List<DishItemDTO>> responseEntity = ResponseEntity.ok().body(dishItemDTOs);
         return responseEntity;
+    }
+
+    @Override
+    public void delete(Long id) {
+        DishItemEntity dishItemEntity = dishItemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dish item with id " + id + " not found"));
+        dishItemEntity.setDeleted(true);
+        try {
+            dishItemRepository.save(dishItemEntity);
+        } catch (DataAccessException | PersistenceException e) {
+            throw new DatabaseException("Dish item was not deleted due to problems connecting to the database");
+        }
     }
 
 }

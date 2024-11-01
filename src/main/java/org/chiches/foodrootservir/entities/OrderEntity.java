@@ -1,7 +1,11 @@
 package org.chiches.foodrootservir.entities;
 
 import jakarta.persistence.*;
+import org.chiches.foodrootservir.exceptions.order.NotEnoughStockException;
+import org.chiches.foodrootservir.exceptions.order.OrderStatusChangeException;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,59 +28,65 @@ public class OrderEntity extends BaseEntity {
     protected OrderEntity() {
     }
 
-    public OrderEntity(UserEntity user, OrderStatus status, Double fullPrice, LocalDateTime dateOfCreation, List<OrderContentEntity> orderContents) {
+    public OrderEntity(UserEntity user) {
         this.user = user;
-        this.status = status;
-        this.fullPrice = fullPrice;
-        this.dateOfCreation = dateOfCreation;
-        this.orderContents = orderContents;
+        this.status = OrderStatus.CREATED;
+        this.dateOfCreation = LocalDateTime.now();
+        this.orderContents = new ArrayList<>();
+        this.fullPrice = 0d;
+    }
+
+    public void setOrderContent(DishItemEntity dishItemEntity, int quantity) {
+        if (dishItemEntity.getQuantity() < quantity) {
+            throw new NotEnoughStockException("Not enough stock for " + dishItemEntity.getName());
+        }
+        OrderContentEntity orderContentEntity = new OrderContentEntity(
+                dishItemEntity,
+                quantity,
+                this
+        );
+        orderContents.add(orderContentEntity);
+        this.fullPrice += dishItemEntity.getPrice() * orderContentEntity.getQuantity();
+        this.fullPrice = Math.floor(fullPrice * 100) / 100;
+    }
+
+    public void changeStatus(OrderStatus orderStatus) {
+        if (status.equals(OrderStatus.CREATED)) {
+            switch (orderStatus) {
+                case COMPLETED -> {
+                    this.dateOfCompletion = LocalDateTime.now();
+                    this.status = OrderStatus.COMPLETED;
+                }
+                case CANCELED -> {
+                    this.status = OrderStatus.CANCELED;
+                }
+                default -> {
+                    throw new OrderStatusChangeException("Invalid order status");
+                }
+            }
+        } else {
+            throw new OrderStatusChangeException("Cannot change order status. Current status: " + status);
+        }
     }
 
     public UserEntity getUser() {
         return user;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
     public Double getFullPrice() {
         return fullPrice;
-    }
-
-    public void setFullPrice(Double fullPrice) {
-        this.fullPrice = fullPrice;
     }
 
     public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
     public LocalDateTime getDateOfCreation() {
         return dateOfCreation;
-    }
-
-    public void setDateOfCreation(LocalDateTime dateOfCreation) {
-        this.dateOfCreation = dateOfCreation;
-    }
-
-    public LocalDateTime getDateOfCompletion() {
-        return dateOfCompletion;
-    }
-
-    public void setDateOfCompletion(LocalDateTime dateOfCompletion) {
-        this.dateOfCompletion = dateOfCompletion;
     }
 
     public List<OrderContentEntity> getOrderContents() {
         return orderContents;
     }
 
-    public void setOrderContents(List<OrderContentEntity> orderContents) {
-        this.orderContents = orderContents;
-    }
 }

@@ -31,8 +31,8 @@ public class CategoryController {
     }
 
     @GetMapping(path = "/get")
-    public ResponseEntity<List<CategoryDTO>> getCategories() {
-        ResponseEntity<List<CategoryDTO>> responseEntity = categoryService.findAll();
+    public ResponseEntity<List<CategoryDTO>> getCategories(@RequestParam boolean active) {
+        ResponseEntity<List<CategoryDTO>> responseEntity = categoryService.findAll(active);
         return responseEntity;
     }
 

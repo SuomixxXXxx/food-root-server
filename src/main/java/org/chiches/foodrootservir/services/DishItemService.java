@@ -20,4 +20,6 @@ public interface DishItemService {
 
     ResponseEntity<List<DishItemDTO>> getAllByName(String name);
 
+    void delete(Long id);
+
 }
