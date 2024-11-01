@@ -17,6 +17,9 @@ public class DishItemEntity extends BaseEntity {
     private Double price;
     private Integer quantity;
 
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
     @OneToMany(mappedBy = "dishItem", fetch = FetchType.LAZY)
     private List<OrderContentEntity> orderContents;
 
@@ -29,6 +32,7 @@ public class DishItemEntity extends BaseEntity {
         this.weight = weight;
         this.price = price;
         this.quantity = quantity;
+        this.isDeleted = false;
     }
 
     public CategoryEntity getCategory() {
@@ -77,5 +81,13 @@ public class DishItemEntity extends BaseEntity {
 
     public void setOrderContents(List<OrderContentEntity> orderContents) {
         this.orderContents = orderContents;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

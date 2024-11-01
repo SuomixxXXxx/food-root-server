@@ -60,4 +60,9 @@ public class DishItemController {
         return responseEntity;
     }
 
+    @DeleteMapping(path = "/delete")
+    public void delete(@RequestParam Long id) {
+        dishItemService.delete(id);
+    }
+
 }

@@ -12,6 +12,7 @@ import org.chiches.foodrootservir.repositories.DishItemRepository;
 import org.chiches.foodrootservir.services.DishItemService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,7 +86,7 @@ public class DishItemServiceImpl implements DishItemService {
             ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
-            throw new DatabaseException("Category was not created due to problems connecting to the database");
+            throw new DatabaseException("Dish item was not updated due to problems connecting to the database");
         }
     }
 
@@ -112,6 +113,18 @@ public class DishItemServiceImpl implements DishItemService {
         }
         ResponseEntity<List<DishItemDTO>> responseEntity = ResponseEntity.ok().body(dishItemDTOs);
         return responseEntity;
+    }
+
+    @Override
+    public void delete(Long id) {
+        DishItemEntity dishItemEntity = dishItemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Dish item with id " + id + " not found"));
+        dishItemEntity.setDeleted(true);
+        try {
+            dishItemRepository.save(dishItemEntity);
+        } catch (DataAccessException | PersistenceException e) {
+            throw new DatabaseException("Dish item was not deleted due to problems connecting to the database");
+        }
     }
 
 }
