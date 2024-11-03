@@ -2,8 +2,10 @@ package org.chiches.foodrootservir.services.impl;
 
 import org.chiches.foodrootservir.dto.TokenDTO;
 import org.chiches.foodrootservir.dto.UserDTO;
+import org.chiches.foodrootservir.entities.AuthorityEntity;
 import org.chiches.foodrootservir.entities.RefreshTokenEntity;
 import org.chiches.foodrootservir.entities.UserEntity;
+import org.chiches.foodrootservir.repositories.AuthorityRepository;
 import org.chiches.foodrootservir.repositories.UserRepository;
 import org.chiches.foodrootservir.security.JwtService;
 import org.chiches.foodrootservir.security.RefreshTokenService;
@@ -16,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
@@ -23,13 +27,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final AuthorityRepository authorityRepository;
 
-    public AuthenticationServiceImpl(UserRepository userRepository, AuthenticationManager authenticationManager, JwtService jwtService, RefreshTokenService refreshTokenService, PasswordEncoder passwordEncoder) {
+    public AuthenticationServiceImpl(UserRepository userRepository, AuthenticationManager authenticationManager, JwtService jwtService, RefreshTokenService refreshTokenService, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository) {
         this.userRepository = userRepository;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
         this.passwordEncoder = passwordEncoder;
+        this.authorityRepository = authorityRepository;
     }
 
     @Override
@@ -52,15 +58,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public TokenDTO register(UserDTO userDto){
-        if (userRepository.existsByLogin(userDto.getLogin())){
+    public TokenDTO register(UserDTO userDto) {
+        if (userRepository.existsByLogin(userDto.getLogin())) {
             throw new IllegalArgumentException("User with login " + userDto.getLogin() + " already exists");
         }
+
+        List<AuthorityEntity> defaultAuthorities = authorityRepository.findByAuthorityContainingIgnoreCase("user");
+
         UserEntity userEntity = new UserEntity(
                 userDto.getLogin(),
                 passwordEncoder.encode(userDto.getPassword()),
                 userDto.getName(),
-                userDto.getSurname()
+                userDto.getSurname(),
+                defaultAuthorities
         );
         userRepository.save(userEntity);
         String token = jwtService.generateToken(userEntity);
@@ -69,7 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public TokenDTO refresh(String refreshToken){
+    public TokenDTO refresh(String refreshToken) {
         RefreshTokenEntity refreshTokenEntity = refreshTokenService.verifyExpiration(refreshTokenService.findByToken(refreshToken).orElseThrow());
         //todo: catch and all of that
 
