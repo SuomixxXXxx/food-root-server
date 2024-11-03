@@ -45,6 +45,14 @@ public class UserEntity extends BaseEntity implements UserDetails {
         this.surname = surname;
     }
 
+    public UserEntity(String login, String password, String name, String surname, List<AuthorityEntity> authorities) {
+        this.login = login;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.authorities = authorities;
+    }
+
     public String getName() {
         return name;
     }
