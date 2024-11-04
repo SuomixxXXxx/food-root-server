@@ -9,8 +9,8 @@ import org.springframework.web.socket.config.annotation.*;
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/stomp/ordersub");// /topic from docs or subscribtion in stompus
-        registry.setApplicationDestinationPrefixes("/stomp/orders"); // /app from docs or send in stompus
+        registry.enableSimpleBroker("/ordersub");// /topic from docs or subscribtion in stompus
+        registry.setApplicationDestinationPrefixes("/orders"); // /app from docs or send in stompus
     }
 
     @Override
