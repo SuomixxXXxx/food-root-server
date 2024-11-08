@@ -6,11 +6,11 @@ import java.util.List;
 
 public class FileUploadDTO {
     private Long id;
-    private List<MultipartFile> files;
+    private MultipartFile file;
 
-    public FileUploadDTO(Long id, List<MultipartFile> files) {
+    public FileUploadDTO(Long id, MultipartFile file) {
         this.id = id;
-        this.files = files;
+        this.file = file;
     }
 
     public Long getId() {
@@ -21,11 +21,11 @@ public class FileUploadDTO {
         this.id = id;
     }
 
-    public List<MultipartFile> getFiles() {
-        return files;
+    public MultipartFile getFile() {
+        return file;
     }
 
-    public void setFiles(List<MultipartFile> files) {
-        this.files = files;
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 }

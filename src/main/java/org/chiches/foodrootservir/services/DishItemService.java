@@ -24,6 +24,6 @@ public interface DishItemService {
 
     void delete(Long id);
 
-    ResponseEntity<List<UrlDTO>> uploadImages(FileUploadDTO fileUploadDTO);
+    ResponseEntity<UrlDTO> uploadImage(FileUploadDTO fileUploadDTO);
 
 }

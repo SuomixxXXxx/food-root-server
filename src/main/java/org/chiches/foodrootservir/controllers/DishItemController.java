@@ -68,9 +68,9 @@ public class DishItemController {
     }
 
     @PostMapping(path = "/upload-picture")
-    public ResponseEntity<List<UrlDTO>> uploadPicture(@ModelAttribute FileUploadDTO fileUploadDTO) {
-        ResponseEntity<List<UrlDTO>> responseEntity;
-        responseEntity = dishItemService.uploadImages(fileUploadDTO);
+    public ResponseEntity<UrlDTO> uploadPicture(@ModelAttribute FileUploadDTO fileUploadDTO) {
+        ResponseEntity<UrlDTO> responseEntity;
+        responseEntity = dishItemService.uploadImage(fileUploadDTO);
         return responseEntity;
     }
 

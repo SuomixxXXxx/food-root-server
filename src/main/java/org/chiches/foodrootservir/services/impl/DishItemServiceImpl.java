@@ -1,6 +1,7 @@
 package org.chiches.foodrootservir.services.impl;
 
 import jakarta.persistence.PersistenceException;
+import org.apache.tomcat.util.http.fileupload.impl.FileUploadIOException;
 import org.chiches.foodrootservir.dto.CategoryDTO;
 import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.dto.FileUploadDTO;
@@ -134,18 +135,18 @@ public class DishItemServiceImpl implements DishItemService {
     }
 
     @Override
-    public ResponseEntity<List<UrlDTO>> uploadImages(FileUploadDTO fileUploadDTO) {
-        List<MultipartFile> files = fileUploadDTO.getFiles();
-        List<UrlDTO> urls = new ArrayList<>();
-        for (int i = 0; i < files.size(); i++) {
-            String name = String.format("dishes/%d_%d", fileUploadDTO.getId(), i);
-            if (!files.get(i).isEmpty() && !storageService.fileExists("food-root", name)) {
-                String url = storageService.uploadFile(files.get(i), name);
-                urls.add(new UrlDTO(url));
-            }
+    public ResponseEntity<UrlDTO> uploadImage(FileUploadDTO fileUploadDTO) {
+        MultipartFile file = fileUploadDTO.getFile();
+        String url;
+        String name = String.format("dishes/%d.jpg", fileUploadDTO.getId());
+            if (!file.isEmpty()) {
+                url = storageService.uploadFile(file, name);
+                UrlDTO urlDTO = new UrlDTO(url);
+                ResponseEntity<UrlDTO> responseEntity = ResponseEntity.ok().body(urlDTO);
+                return responseEntity;
+            } else {
+                throw new RuntimeException();
         }
-        ResponseEntity<List<UrlDTO>> responseEntity = ResponseEntity.ok().body(urls);
-        return responseEntity;
     }
 
 }
