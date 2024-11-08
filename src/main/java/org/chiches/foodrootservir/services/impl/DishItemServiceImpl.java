@@ -3,6 +3,8 @@ package org.chiches.foodrootservir.services.impl;
 import jakarta.persistence.PersistenceException;
 import org.chiches.foodrootservir.dto.CategoryDTO;
 import org.chiches.foodrootservir.dto.DishItemDTO;
+import org.chiches.foodrootservir.dto.FileUploadDTO;
+import org.chiches.foodrootservir.dto.UrlDTO;
 import org.chiches.foodrootservir.entities.CategoryEntity;
 import org.chiches.foodrootservir.entities.DishItemEntity;
 import org.chiches.foodrootservir.exceptions.DatabaseException;
@@ -10,12 +12,14 @@ import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
 import org.chiches.foodrootservir.repositories.CategoryRepository;
 import org.chiches.foodrootservir.repositories.DishItemRepository;
 import org.chiches.foodrootservir.services.DishItemService;
+import org.chiches.foodrootservir.services.StorageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +30,13 @@ public class DishItemServiceImpl implements DishItemService {
     private final DishItemRepository dishItemRepository;
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
+    private final StorageService storageService;
 
-    public DishItemServiceImpl(DishItemRepository dishItemRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public DishItemServiceImpl(DishItemRepository dishItemRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, StorageService storageService) {
         this.dishItemRepository = dishItemRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
+        this.storageService = storageService;
     }
 
     @Override
@@ -125,6 +131,21 @@ public class DishItemServiceImpl implements DishItemService {
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Dish item was not deleted due to problems connecting to the database");
         }
+    }
+
+    @Override
+    public ResponseEntity<List<UrlDTO>> uploadImages(FileUploadDTO fileUploadDTO) {
+        List<MultipartFile> files = fileUploadDTO.getFiles();
+        List<UrlDTO> urls = new ArrayList<>();
+        for (int i = 0; i < files.size(); i++) {
+            String name = String.format("dishes/%d_%d", fileUploadDTO.getId(), i);
+            if (!files.get(i).isEmpty() && !storageService.fileExists("food-root", name)) {
+                String url = storageService.uploadFile(files.get(i), name);
+                urls.add(new UrlDTO(url));
+            }
+        }
+        ResponseEntity<List<UrlDTO>> responseEntity = ResponseEntity.ok().body(urls);
+        return responseEntity;
     }
 
 }
