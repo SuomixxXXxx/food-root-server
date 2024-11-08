@@ -80,13 +80,23 @@ public class DishItemServiceImpl implements DishItemService {
     public ResponseEntity<DishItemDTO> update(DishItemDTO dishItemDTO) {
         DishItemEntity dishItemEntity = dishItemRepository.findById(dishItemDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Dish item not found"));
-        CategoryEntity categoryEntity = categoryRepository.findById(dishItemDTO.getCategoryDTO().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
-        dishItemEntity.setCategory(categoryEntity);
-        dishItemEntity.setName(dishItemDTO.getName());
-        dishItemEntity.setPrice(dishItemDTO.getPrice());
-        dishItemEntity.setQuantity(dishItemDTO.getQuantity());
-        dishItemEntity.setWeight(dishItemDTO.getWeight());
+        if (dishItemDTO.getCategoryDTO() != null && dishItemDTO.getCategoryDTO().getId() != null) {
+            CategoryEntity categoryEntity = categoryRepository.findById(dishItemDTO.getCategoryDTO().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+            dishItemEntity.setCategory(categoryEntity);
+        }
+        if (dishItemDTO.getName() != null) {
+            dishItemEntity.setName(dishItemDTO.getName());
+        }
+        if (dishItemDTO.getPrice() != null) {
+            dishItemEntity.setPrice(dishItemDTO.getPrice());
+        }
+        if (dishItemDTO.getQuantity() != null) {
+            dishItemEntity.setQuantity(dishItemDTO.getQuantity());
+        }
+        if (dishItemDTO.getWeight() != null) {
+            dishItemEntity.setWeight(dishItemDTO.getWeight());
+        }
         try {
             DishItemEntity savedDishItemEntity = dishItemRepository.save(dishItemEntity);
             DishItemDTO savedDishItemDTO = modelMapper.map(savedDishItemEntity, DishItemDTO.class);

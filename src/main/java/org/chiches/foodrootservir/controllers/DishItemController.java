@@ -1,5 +1,6 @@
 package org.chiches.foodrootservir.controllers;
 
+import jakarta.validation.Valid;
 import org.chiches.foodrootservir.dto.CategoryDTO;
 import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.dto.FileUploadDTO;
@@ -48,7 +49,7 @@ public class DishItemController {
         return responseEntity;
     }
 
-    @PutMapping(path = "/update")
+    @PatchMapping(path = "/update")
     public ResponseEntity<DishItemDTO> updateDishItem(@RequestBody DishItemDTO dishItemDTO) {
         ResponseEntity<DishItemDTO> responseEntity;
         responseEntity = dishItemService.update(dishItemDTO);
