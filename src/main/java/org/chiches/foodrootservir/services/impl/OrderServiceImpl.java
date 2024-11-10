@@ -8,9 +8,11 @@ import org.chiches.foodrootservir.entities.*;
 import org.chiches.foodrootservir.exceptions.DatabaseException;
 import org.chiches.foodrootservir.exceptions.InvalidArgumentException;
 import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
+import org.chiches.foodrootservir.misc.PublicDestination;
 import org.chiches.foodrootservir.repositories.DishItemRepository;
 import org.chiches.foodrootservir.repositories.OrderRepository;
 import org.chiches.foodrootservir.repositories.UserRepository;
+import org.chiches.foodrootservir.services.NotificationService;
 import org.chiches.foodrootservir.services.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
@@ -32,15 +34,14 @@ public class OrderServiceImpl implements OrderService {
     private final ModelMapper modelMapper;
     private final DishItemRepository dishItemRepository;
     private final UserRepository userRepository;
-    //private final OrderWebSocketHandler orderWebSocketHandler;
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final NotificationService notificationService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper modelMapper, DishItemRepository dishItemRepository, UserRepository userRepository, SimpMessagingTemplate simpMessagingTemplate) {
+    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper modelMapper, DishItemRepository dishItemRepository, UserRepository userRepository, NotificationService notificationService) {
         this.orderRepository = orderRepository;
         this.modelMapper = modelMapper;
         this.dishItemRepository = dishItemRepository;
         this.userRepository = userRepository;
-        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -127,6 +128,6 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDTO> activeOrders = orderRepository.findByStatus(OrderStatus.CREATED).stream()
                 .map(this::convert)
                 .collect(Collectors.toList());
-        simpMessagingTemplate.convertAndSend("/ordersub/active-orders", ResponseEntity.ok(activeOrders));
+        notificationService.sentToAll(PublicDestination.ORDER_UPDATE, ResponseEntity.ok(activeOrders));
     }
 }

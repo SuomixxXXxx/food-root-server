@@ -2,17 +2,18 @@ package org.chiches.foodrootservir.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.chiches.foodrootservir.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -24,10 +25,9 @@ public class JwtService {
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         if (userDetails instanceof UserEntity customUserDetails) {
-            //claims.put("login", customUserDetails.getLogin());
             claims.put("role", customUserDetails.getAuthorities()
                     .stream()
-                    .map(authority -> authority.getAuthority())
+                    .map(GrantedAuthority::getAuthority)
                     .toArray()
             );
         }
@@ -36,11 +36,12 @@ public class JwtService {
 
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
-                .addClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + (1000L * 60L * 30L))) // half an hour
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256).compact();
+                .claims(extraClaims)
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + (1000L * 60L * 30L))) // half an hour
+                .signWith(getSigningKey(), Jwts.SIG.HS256)
+                .compact();
     }
 
     public <T> T extractClaim(String jwtToken, Function<Claims, T> claimsResolver) {
@@ -61,16 +62,35 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
+    public boolean hasRoleStaff(String token) {
+        return extractClaim(token, claims -> {
+            List<String> roles = claims.get("role", List.class);
+            if (roles == null) return false;
+            return roles.stream().anyMatch(role -> role.toLowerCase().contains("staff"));
+        });
+    }
+
+    public boolean hasRoleAdmin(String token) {
+        return extractClaim(token, claims -> {
+            List<String> roles = claims.get("role", List.class);
+            if (roles == null) return false;
+            return roles.stream().anyMatch(role -> role.toLowerCase().contains("admin"));
+        });
+    }
+
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
     private Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token)
-                .getBody();
+        return Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    private Key getSigningKey() {
+    private SecretKey getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
         return Keys.hmacShaKeyFor(keyBytes);
     }

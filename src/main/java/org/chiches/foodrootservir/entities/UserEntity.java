@@ -12,9 +12,10 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 public class UserEntity extends BaseEntity implements UserDetails {
-
     private String name;
     private String surname;
+    //FIXME: WHEN IMPLEMENTING USER EDITING, CHECK FOR DataIntegrityViolationException
+    @Column(unique = true)
     private String login;
     private String password;
     private boolean isAccountNonExpired = true;
@@ -85,7 +86,7 @@ public class UserEntity extends BaseEntity implements UserDetails {
     public String getPassword() {
         return password;
     }
-
+    // REALLY IMPORTANT
     @Override
     public String getUsername() {
         return this.login;

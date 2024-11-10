@@ -17,13 +17,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/ordersub");// /topic from docs or subscribtion in stompus
-        registry.setApplicationDestinationPrefixes("/orders"); // /app from docs or send in stompus
+        registry.enableSimpleBroker("/ordersub","/general");// /topic from docs or subscribtion in stompus
+        registry.setApplicationDestinationPrefixes("/orders");
+        registry.setUserDestinationPrefix("/user");// /app from docs or send in stompus
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/stomp/order") //буквально endpoint
+        registry.addEndpoint("/stomp/order","/stomp/user") //буквально endpoint
                 .setAllowedOrigins("*");
     }
 

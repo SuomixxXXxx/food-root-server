@@ -36,7 +36,7 @@ public class JwtHandshakeInterceptor implements ChannelInterceptor {
             String login = jwtService.extractUserName(jwt);
             if (login != null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(login);
-                if (jwtService.isTokenValid(jwt, userDetails)){
+                if (jwtService.isTokenValid(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
