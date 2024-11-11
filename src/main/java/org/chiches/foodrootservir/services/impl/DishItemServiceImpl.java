@@ -49,11 +49,10 @@ public class DishItemServiceImpl implements DishItemService {
         try {
             DishItemEntity savedDishItemEntity = dishItemRepository.save(dishItemEntity);
             DishItemDTO savedDishItemDTO = modelMapper.map(savedDishItemEntity, DishItemDTO.class);
-            MultipartFile file = dishItemDTO.getMultipartFile();
-            String url;
+            MultipartFile file = dishItemDTO.getFile();
             String name = String.format("dishes/%d.jpg", dishItemEntity.getId());
             if (file != null) {
-                url = storageService.uploadFile(file, name);
+                String url = storageService.uploadFile(file, name);
                 savedDishItemDTO.setUrl(url);
             }
             ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
@@ -107,11 +106,10 @@ public class DishItemServiceImpl implements DishItemService {
         try {
             DishItemEntity savedDishItemEntity = dishItemRepository.save(dishItemEntity);
             DishItemDTO savedDishItemDTO = modelMapper.map(savedDishItemEntity, DishItemDTO.class);
-            MultipartFile file = dishItemDTO.getMultipartFile();
-            String url;
+            MultipartFile file = dishItemDTO.getFile();
             String name = String.format("dishes/%d.jpg", dishItemEntity.getId());
             if (file != null) {
-                url = storageService.uploadFile(file, name);
+                String url = storageService.uploadFile(file, name);
                 savedDishItemDTO.setUrl(url);
             }
             ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
@@ -163,7 +161,7 @@ public class DishItemServiceImpl implements DishItemService {
         MultipartFile file = fileUploadDTO.getFile();
         String url;
         String name = String.format("dishes/%d.jpg", fileUploadDTO.getId());
-            if (!file.isEmpty()) {
+            if (file != null) {
                 url = storageService.uploadFile(file, name);
                 UrlDTO urlDTO = new UrlDTO(url);
                 ResponseEntity<UrlDTO> responseEntity = ResponseEntity.ok().body(urlDTO);

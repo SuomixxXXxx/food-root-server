@@ -31,7 +31,7 @@ public class DishItemDTO {
     private Integer quantity;
     @NotNull(message = "OrderContentDTO cannot be empty")
     private List<OrderContentDTO> orderContentDTOs;
-    private MultipartFile multipartFile;
+    private MultipartFile file;
     private String url;
 
     public DishItemDTO() {
@@ -103,12 +103,12 @@ public class DishItemDTO {
         this.orderContentDTOs = orderContentDTOs;
     }
 
-    public MultipartFile getMultipartFile() {
-        return multipartFile;
+    public MultipartFile getFile() {
+        return file;
     }
 
-    public void setMultipartFile(MultipartFile multipartFile) {
-        this.multipartFile = multipartFile;
+    public void setFile(MultipartFile multipartFile) {
+        this.file = multipartFile;
     }
 
     public String getUrl() {
