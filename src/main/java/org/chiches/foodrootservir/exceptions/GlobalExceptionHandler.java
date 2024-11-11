@@ -59,4 +59,11 @@ public class GlobalExceptionHandler {
         return responseEntity;
     }
 
+    @ExceptionHandler(EmptyFileException.class)
+    public ResponseEntity<ExceptionResponse> catchEmptyFileException(EmptyFileException e) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(e.getMessage());
+        ResponseEntity<ExceptionResponse> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
+        return responseEntity;
+    }
+
 }

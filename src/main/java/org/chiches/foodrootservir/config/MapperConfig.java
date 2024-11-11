@@ -14,7 +14,8 @@ public class MapperConfig {
 
         modelMapper.typeMap(DishItemEntity.class, DishItemDTO.class)
                 .addMappings(mapper -> mapper.map(DishItemEntity::getCategory, DishItemDTO::setCategoryDTO))
-                .addMappings(mapper -> mapper.skip(DishItemDTO::setOrderContentDTOs));
+                .addMappings(mapper -> mapper.skip(DishItemDTO::setOrderContentDTOs))
+                .addMappings(mapper -> mapper.skip(DishItemDTO::setFile));
         
         return modelMapper;
     }
