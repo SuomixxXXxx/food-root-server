@@ -44,11 +44,18 @@ public class DishItemServiceImpl implements DishItemService {
     public ResponseEntity<DishItemDTO> createDishItem(DishItemDTO dishItemDTO) {
         DishItemEntity dishItemEntity = modelMapper.map(dishItemDTO, DishItemEntity.class);
         CategoryEntity categoryEntity = categoryRepository.findById(dishItemDTO.getCategoryDTO().getId())
-                        .orElseThrow();
+                .orElseThrow();
         dishItemEntity.setCategory(categoryEntity);
         try {
             DishItemEntity savedDishItemEntity = dishItemRepository.save(dishItemEntity);
             DishItemDTO savedDishItemDTO = modelMapper.map(savedDishItemEntity, DishItemDTO.class);
+            MultipartFile file = dishItemDTO.getMultipartFile();
+            String url;
+            String name = String.format("dishes/%d.jpg", dishItemEntity.getId());
+            if (file != null) {
+                url = storageService.uploadFile(file, name);
+                savedDishItemDTO.setUrl(url);
+            }
             ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
@@ -100,6 +107,13 @@ public class DishItemServiceImpl implements DishItemService {
         try {
             DishItemEntity savedDishItemEntity = dishItemRepository.save(dishItemEntity);
             DishItemDTO savedDishItemDTO = modelMapper.map(savedDishItemEntity, DishItemDTO.class);
+            MultipartFile file = dishItemDTO.getMultipartFile();
+            String url;
+            String name = String.format("dishes/%d.jpg", dishItemEntity.getId());
+            if (file != null) {
+                url = storageService.uploadFile(file, name);
+                savedDishItemDTO.setUrl(url);
+            }
             ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {

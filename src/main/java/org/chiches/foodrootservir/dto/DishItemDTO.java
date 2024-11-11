@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.chiches.foodrootservir.entities.CategoryEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,6 +31,8 @@ public class DishItemDTO {
     private Integer quantity;
     @NotNull(message = "OrderContentDTO cannot be empty")
     private List<OrderContentDTO> orderContentDTOs;
+    private MultipartFile multipartFile;
+    private String url;
 
     public DishItemDTO() {
     }
@@ -98,5 +101,21 @@ public class DishItemDTO {
 
     public void setOrderContentDTOs(List<OrderContentDTO> orderContentDTOs) {
         this.orderContentDTOs = orderContentDTOs;
+    }
+
+    public MultipartFile getMultipartFile() {
+        return multipartFile;
+    }
+
+    public void setMultipartFile(MultipartFile multipartFile) {
+        this.multipartFile = multipartFile;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
