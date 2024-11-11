@@ -2,6 +2,7 @@ package org.chiches.foodrootservir.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryDTO {
@@ -9,6 +10,8 @@ public class CategoryDTO {
     private Long id;
     @NotNull(message = "Name cannot be empty")
     private String name;
+    private MultipartFile file;
+    private String url;
 
     public CategoryDTO() {
     }
@@ -32,5 +35,21 @@ public class CategoryDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile multipartFile) {
+        this.file = multipartFile;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

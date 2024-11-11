@@ -1,16 +1,20 @@
 package org.chiches.foodrootservir.services.impl;
 
 import jakarta.persistence.PersistenceException;
+import org.chiches.foodrootservir.dto.FileUploadDTO;
+import org.chiches.foodrootservir.dto.UrlDTO;
 import org.chiches.foodrootservir.exceptions.DatabaseException;
 import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
 import org.chiches.foodrootservir.dto.CategoryDTO;
 import org.chiches.foodrootservir.entities.CategoryEntity;
 import org.chiches.foodrootservir.repositories.CategoryRepository;
 import org.chiches.foodrootservir.services.CategoryService;
+import org.chiches.foodrootservir.services.StorageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +24,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
+    private final StorageService storageService;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository,
-                               ModelMapper modelMapper) {
+                               ModelMapper modelMapper, StorageService storageService) {
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
+        this.storageService = storageService;
     }
 
     @Override
@@ -33,6 +39,12 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryEntity categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
             CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
             CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
+            MultipartFile file = categoryDTO.getFile();
+            String name = String.format("dishes/%d.jpg", categoryEntity.getId());
+            if (file != null) {
+                String url = storageService.uploadFile(file, name);
+                savedDTO.setUrl(url);
+            }
             ResponseEntity<CategoryDTO> responseEntity = ResponseEntity.ok().body(savedDTO);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
@@ -73,10 +85,31 @@ public class CategoryServiceImpl implements CategoryService {
             categoryEntity.setName(categoryDTO.getName());
             CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
             CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
+            MultipartFile file = categoryDTO.getFile();
+            String name = String.format("dishes/%d.jpg", categoryEntity.getId());
+            if (file != null) {
+                String url = storageService.uploadFile(file, name);
+                savedDTO.setUrl(url);
+            }
             ResponseEntity<CategoryDTO> responseEntity = ResponseEntity.ok().body(savedDTO);
             return responseEntity;
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Category was not created due to problems connecting to the database");
+        }
+    }
+
+    @Override
+    public ResponseEntity<UrlDTO> uploadImage(FileUploadDTO fileUploadDTO) {
+        MultipartFile file = fileUploadDTO.getFile();
+        String url;
+        String name = String.format("categories/%d.jpg", fileUploadDTO.getId());
+        if (file != null) {
+            url = storageService.uploadFile(file, name);
+            UrlDTO urlDTO = new UrlDTO(url);
+            ResponseEntity<UrlDTO> responseEntity = ResponseEntity.ok().body(urlDTO);
+            return responseEntity;
+        } else {
+            throw new RuntimeException();
         }
     }
 

@@ -1,6 +1,8 @@
 package org.chiches.foodrootservir.controllers;
 
 import org.chiches.foodrootservir.dto.CategoryDTO;
+import org.chiches.foodrootservir.dto.FileUploadDTO;
+import org.chiches.foodrootservir.dto.UrlDTO;
 import org.chiches.foodrootservir.services.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,13 @@ public class CategoryController {
     @PutMapping(path = "/update")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO) {
         ResponseEntity<CategoryDTO> responseEntity = categoryService.updateCategory(categoryDTO);
+        return responseEntity;
+    }
+
+    @PostMapping(path = "/upload-picture")
+    public ResponseEntity<UrlDTO> uploadPicture(@ModelAttribute FileUploadDTO fileUploadDTO) {
+        ResponseEntity<UrlDTO> responseEntity;
+        responseEntity = categoryService.uploadImage(fileUploadDTO);
         return responseEntity;
     }
 
