@@ -1,6 +1,7 @@
 package org.chiches.foodrootservir.services.impl;
 
 import org.chiches.foodrootservir.services.StorageService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -11,20 +12,18 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Paths;
 
 @Service
 public class StorageServiceImpl implements StorageService {
     private final S3Client s3;
 
-    public StorageServiceImpl() {
+    public StorageServiceImpl(@Value("${yc.access-key}") String accessKey, @Value("${yc.secret-key}") String secretKey) {
         this.s3 = S3Client.builder()
                 .endpointOverride(URI.create("https://storage.yandexcloud.net"))
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("YCAJERbo2_E2ZL2Y7E6kAZxzg", "YCNRWZT0GshdkvPWrvUicqwqel9pExfutvqgjV_1")))
+                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
                 .region(Region.EU_NORTH_1)
                 .build();
     }
@@ -36,8 +35,7 @@ public class StorageServiceImpl implements StorageService {
                 .key(name)
                 .build();
         try {
-            PutObjectResponse response = s3.putObject(request, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
-            System.out.println("File uploaded: " + response);
+            s3.putObject(request, RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
         } catch (IOException e) {
             e.printStackTrace();
         }
