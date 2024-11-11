@@ -10,6 +10,9 @@ public class TokenDTO {
         this.refreshToken = refreshToken;
     }
 
+    public TokenDTO() {
+    }
+
     public String getToken() {
         return token;
     }

@@ -25,17 +25,17 @@ public class RefreshTokenService {
     }
 
     public RefreshTokenEntity createRefreshToken(String login) {
-//        UserEntity user = userRepository.findByLogin(login).orElseThrow();
-//        refreshTokenRepository.delete(user.getRefreshToken());
         Optional<RefreshTokenEntity>  refreshTokenEntity= refreshTokenRepository.findByUserLogin(login);
-        if (refreshTokenEntity.isPresent()){
-            refreshTokenRepository.delete(refreshTokenEntity.get());
-        }
+
+        refreshTokenEntity.ifPresent(refreshTokenRepository::delete);
+
         RefreshTokenEntity refreshToken = new RefreshTokenEntity(
                 userRepository.findByLogin(login).get(),
                 UUID.randomUUID().toString(),
                 Instant.now().plusMillis(expirationTime)
+
         );
+
         refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }
