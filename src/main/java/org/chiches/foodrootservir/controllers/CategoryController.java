@@ -20,7 +20,7 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CategoryDTO> createCategory(@RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<CategoryDTO> createCategory(@ModelAttribute CategoryDTO categoryDTO) {
         ResponseEntity<CategoryDTO> responseEntity;
         responseEntity = categoryService.createCategory(categoryDTO);
         return responseEntity;
@@ -39,7 +39,7 @@ public class CategoryController {
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<CategoryDTO> updateCategory(@RequestBody CategoryDTO categoryDTO) {
+    public ResponseEntity<CategoryDTO> updateCategory(@ModelAttribute CategoryDTO categoryDTO) {
         ResponseEntity<CategoryDTO> responseEntity = categoryService.updateCategory(categoryDTO);
         return responseEntity;
     }

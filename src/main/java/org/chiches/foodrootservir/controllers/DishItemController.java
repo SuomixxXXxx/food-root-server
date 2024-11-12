@@ -22,7 +22,7 @@ public class DishItemController {
     }
 
     @PostMapping(path = "/create")
-    public ResponseEntity<DishItemDTO> createDishItem(@RequestBody DishItemDTO dishItemDTO) {
+    public ResponseEntity<DishItemDTO> createDishItem(@ModelAttribute DishItemDTO dishItemDTO) {
         ResponseEntity<DishItemDTO> responseEntity;
         responseEntity = dishItemService.createDishItem(dishItemDTO);
         return responseEntity;
@@ -50,7 +50,7 @@ public class DishItemController {
     }
 
     @PatchMapping(path = "/update")
-    public ResponseEntity<DishItemDTO> updateDishItem(@RequestBody DishItemDTO dishItemDTO) {
+    public ResponseEntity<DishItemDTO> updateDishItem(@ModelAttribute DishItemDTO dishItemDTO) {
         ResponseEntity<DishItemDTO> responseEntity;
         responseEntity = dishItemService.update(dishItemDTO);
         return responseEntity;
