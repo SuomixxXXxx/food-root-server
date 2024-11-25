@@ -6,6 +6,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.chiches.foodrootservir.entities.RefreshTokenEntity;
+import org.chiches.foodrootservir.misc.CookieUtil;
 import org.chiches.foodrootservir.security.JwtService;
 import org.chiches.foodrootservir.security.RefreshTokenService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,13 +24,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final RefreshTokenService refreshTokenService;
+    private final CookieUtil cookieUtil;
     public static final String BEARER_PREFIX = "Bearer_";
     public static final String JWT_COOKIE_NAME = "jwtToken";
     public static final String REFRESH_COOKIE_NAME = "refreshToken";
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, RefreshTokenService refreshTokenService) {
+    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, RefreshTokenService refreshTokenService, CookieUtil cookieUtil) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.refreshTokenService = refreshTokenService;
+        this.cookieUtil = cookieUtil;
     }
 
     @Override
@@ -42,7 +45,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final Cookie jwtCookie = findCookie(cookies, JWT_COOKIE_NAME);
         final Cookie refreshCookie = findCookie(cookies, REFRESH_COOKIE_NAME);
-//        final String authHeader = request.getHeader(JWT_COOKIE_NAME);
         final String jwtToken;
         final String login;
 
@@ -73,17 +75,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 RefreshTokenEntity refreshTokenEntity = refreshTokenService.verifyExpiration(refreshToken);
                 if(refreshTokenService.findByToken(refreshToken).isPresent() && refreshTokenEntity != null){
 
-                    Cookie refreshTokenCookie = new Cookie(REFRESH_COOKIE_NAME,refreshTokenEntity.getToken());
-                    refreshTokenCookie.setHttpOnly(true);
-                    refreshTokenCookie.setMaxAge(86400);
-                    refreshTokenCookie.setPath("/api");
+                    Cookie refreshTokenCookie = cookieUtil.createRefreshCookie(refreshTokenEntity.getToken());
+//                            new Cookie(REFRESH_COOKIE_NAME,refreshTokenEntity.getToken());
+//                    refreshTokenCookie.setHttpOnly(true);
+//                    refreshTokenCookie.setMaxAge(86400);
+//                    refreshTokenCookie.setPath("/api");
                     response.addCookie(refreshTokenCookie);
-                    String newJwtToken = jwtService.generateToken(userDetails);
 
-                    Cookie jwtTokenCookie = new Cookie(JWT_COOKIE_NAME,BEARER_PREFIX + newJwtToken);
-                    //jwtTokenCookie.setHttpOnly(true);
-                    jwtTokenCookie.setMaxAge(60 * 30);
-                    jwtTokenCookie.setPath("/api");
+                    String newJwtToken = jwtService.generateToken(userDetails);
+                    Cookie jwtTokenCookie = cookieUtil.createJWTCookie(newJwtToken);
+//                            new Cookie(JWT_COOKIE_NAME,BEARER_PREFIX + newJwtToken);
+//                    //jwtTokenCookie.setHttpOnly(true);
+//                    jwtTokenCookie.setMaxAge(60 * 30);
+//                    jwtTokenCookie.setPath("/api");
                     response.addCookie(jwtTokenCookie);
 
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

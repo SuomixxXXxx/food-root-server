@@ -38,11 +38,10 @@ public class CookieUtil {
         cookie.setMaxAge(0);
         return cookie;
     }
-    public HttpServletResponse logout(HttpServletResponse response) {
+    public void logout(HttpServletResponse response) {
         Cookie jwtToken = deleteJWTCookie();
         response.addCookie(jwtToken);
         Cookie refreshToken = deleteRefreshCookie();
         response.addCookie(refreshToken);
-        return response;
     }
 }

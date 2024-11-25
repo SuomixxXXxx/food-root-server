@@ -35,7 +35,7 @@ public class AuthController {
     public ResponseEntity<TokenDTO> authenticate(@RequestParam String login, @RequestParam String password, HttpServletResponse response) {
 
         TokenDTO tokenDTO = authenticationService.authenticate(login, password);
-        System.out.println(tokenDTO.getToken());
+
         Cookie jwtToken = cookieUtil.createJWTCookie(tokenDTO.getToken());
         response.addCookie(jwtToken);
 
@@ -46,12 +46,7 @@ public class AuthController {
     }
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        Cookie jwtToken = cookieUtil.deleteJWTCookie();
-        response.addCookie(jwtToken);
-
-        Cookie refreshToken = cookieUtil.deleteRefreshCookie();
-        response.addCookie(refreshToken);
-
+        cookieUtil.logout(response);
         return ResponseEntity.ok().build();
     }
 }
