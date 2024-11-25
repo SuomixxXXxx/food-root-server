@@ -14,14 +14,14 @@
 <!--        </encoder>-->
 <!--    </appender>-->
     <!--    TCP Appender-->
-    <appender name="LOGSTASH_TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>localhost:50000</destination> <!-- Match the Logstash TCP port -->
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
-        <keepAliveDuration>5 minutes</keepAliveDuration>
-    </appender>
+<!--    <appender name="LOGSTASH_TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
+<!--        <destination>localhost:50000</destination> &lt;!&ndash; Match the Logstash TCP port &ndash;&gt;-->
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />-->
+<!--        <keepAliveDuration>5 minutes</keepAliveDuration>-->
+<!--    </appender>-->
     <!-- Root Logger -->
     <root level="info">
-        <appender-ref ref="CONSOLE"/>
+<!--        <appender-ref ref="CONSOLE"/>-->
 <!--        <appender-ref ref="FILE"/>-->
         <appender-ref ref="LOGSTASH_TCP" />
     </root>
