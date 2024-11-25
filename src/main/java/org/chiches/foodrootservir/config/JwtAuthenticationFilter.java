@@ -23,7 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
     private final RefreshTokenService refreshTokenService;
-    public static final String BEARER_PREFIX = "Bearer ";
+    public static final String BEARER_PREFIX = "Bearer_";
     public static final String JWT_COOKIE_NAME = "jwtToken";
     public static final String REFRESH_COOKIE_NAME = "refreshToken";
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService, RefreshTokenService refreshTokenService) {

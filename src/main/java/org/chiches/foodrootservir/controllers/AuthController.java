@@ -27,15 +27,15 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<TokenDTO> refresh(@RequestParam String refreshToken,HttpServletResponse response) {
+
         return ResponseEntity.ok(authenticationService.refresh(refreshToken));
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDTO> authenticate(@RequestParam String login, @RequestParam String password, HttpServletResponse response) {
-        //System.out.println("login: " + login + " password: " + password);
 
         TokenDTO tokenDTO = authenticationService.authenticate(login, password);
-
+        System.out.println(tokenDTO.getToken());
         Cookie jwtToken = cookieUtil.createJWTCookie(tokenDTO.getToken());
         response.addCookie(jwtToken);
 
@@ -43,5 +43,15 @@ public class AuthController {
         response.addCookie(refreshToken);
 
         return ResponseEntity.ok(tokenDTO);
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        Cookie jwtToken = cookieUtil.deleteJWTCookie();
+        response.addCookie(jwtToken);
+
+        Cookie refreshToken = cookieUtil.deleteRefreshCookie();
+        response.addCookie(refreshToken);
+
+        return ResponseEntity.ok().build();
     }
 }

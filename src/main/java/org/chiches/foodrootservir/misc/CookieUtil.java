@@ -1,6 +1,7 @@
 package org.chiches.foodrootservir.misc;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,7 +11,7 @@ public class CookieUtil {
     private static final boolean HTTP_ONLY_JWT = false;// FIXME: security issue, XSS vulnerability
     private static final boolean HTTP_ONLY_REFRESH = true;
     public Cookie createJWTCookie(String jwt) {
-        Cookie cookie = new Cookie(JWT_COOKIE_NAME, "Bearer " + jwt);
+        Cookie cookie = new Cookie(JWT_COOKIE_NAME, "Bearer_" + jwt);
         cookie.setHttpOnly(HTTP_ONLY_JWT);
         cookie.setPath("/api");
         cookie.setMaxAge(60 * 30);
@@ -36,5 +37,12 @@ public class CookieUtil {
         cookie.setPath("/api");
         cookie.setMaxAge(0);
         return cookie;
+    }
+    public HttpServletResponse logout(HttpServletResponse response) {
+        Cookie jwtToken = deleteJWTCookie();
+        response.addCookie(jwtToken);
+        Cookie refreshToken = deleteRefreshCookie();
+        response.addCookie(refreshToken);
+        return response;
     }
 }
