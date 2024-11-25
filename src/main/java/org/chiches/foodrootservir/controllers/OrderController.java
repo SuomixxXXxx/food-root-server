@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "order")
+@RequestMapping(path = "/api/v1/order")
 public class OrderController {
 
     private final OrderService orderService;

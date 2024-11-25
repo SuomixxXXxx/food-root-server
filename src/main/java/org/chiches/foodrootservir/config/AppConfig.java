@@ -1,7 +1,9 @@
 package org.chiches.foodrootservir.config;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.chiches.foodrootservir.repositories.UserRepository;
+import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,4 +48,9 @@ public class AppConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    @Bean
+    public MeterRegistryCustomizer<MeterRegistry> metricsCommonTags() {
+        return registry -> registry.config().commonTags("application", "YOUR_APP_NAME");
+    }
+
 }

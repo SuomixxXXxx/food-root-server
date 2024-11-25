@@ -49,6 +49,13 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+    /**
+     * Validates the provided JWT token against the given user details.
+     *
+     * @param token the JWT token to validate
+     * @param userDetails the user details to validate against
+     * @return true if the token is valid and not expired, false otherwise
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userName = extractUserName(token);
         return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
@@ -58,7 +65,7 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 

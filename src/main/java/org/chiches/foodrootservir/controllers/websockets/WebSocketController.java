@@ -26,7 +26,7 @@ public class WebSocketController {
     }
     @MessageMapping("/getActiveOrders") // topic to send to  /orders/getActiveOrders
     @SendToUser("/ordersub/active-orders") // append /user/ before endpoint, for example /user/ordersub/active-orders
-    public ResponseEntity<?> getActiveOrder(TokenDTO tokenDTO){
+    public ResponseEntity<?> getActiveOrder(){
         return orderService.findAllActive();
     }
 }
