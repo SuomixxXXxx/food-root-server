@@ -6,9 +6,10 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.Instant;
+
 @Entity
 @Table(name = "refresh_tokens")
-public class RefreshTokenEntity  extends BaseEntity{
+public class RefreshTokenEntity extends BaseEntity {
     @OneToOne
     //@JoinColumn(name = "user_id")
     private UserEntity user;

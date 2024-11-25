@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "dishItems")
+@RequestMapping(path = "/api/v1/dishItems")
 public class DishItemController {
 
     private final DishItemService dishItemService;

@@ -6,6 +6,7 @@ import org.chiches.foodrootservir.repositories.RefreshTokenRepository;
 import org.chiches.foodrootservir.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Service
 public class RefreshTokenService {
     //@Value("${jwt.refreshTokenExpiration}")
-    private long expirationTime = 1000000;
+    private long expirationTime = 86400000L;
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -39,13 +40,18 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
         return refreshToken;
     }
+    @Transactional
+    public RefreshTokenEntity verifyExpiration(String refreshToken) {
+        RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("Refresh Token is not in the database"));
 
-    public RefreshTokenEntity verifyExpiration(RefreshTokenEntity refreshToken) {
-        if (refreshToken.getExpiryDate().compareTo(Instant.now()) < 0) {
-            refreshTokenRepository.delete(refreshToken);
+        if (refreshTokenEntity.getExpiryDate().compareTo(Instant.now()) < 0) {
+            refreshTokenRepository.delete(refreshTokenEntity);
             return null;
         }
-        return refreshToken;
+        refreshTokenEntity.setExpiryDate(Instant.now().plusMillis(expirationTime));
+        refreshTokenRepository.save(refreshTokenEntity);
+        return refreshTokenEntity;
     }
 
     public int deleteByUserId(Long userId) {
