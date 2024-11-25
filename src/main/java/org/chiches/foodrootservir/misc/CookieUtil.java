@@ -18,6 +18,7 @@ public class CookieUtil {
         cookie.setPath(PATH);
         cookie.setMaxAge(60 * 30);
         cookie.setDomain(DOMAIN);
+        cookie.setAttribute("SameSite", "Lax");
         return cookie;
     }
     public Cookie createRefreshCookie(String refreshToken) {
