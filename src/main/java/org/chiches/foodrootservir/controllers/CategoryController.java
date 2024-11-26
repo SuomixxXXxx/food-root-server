@@ -22,27 +22,26 @@ public class CategoryController {
 
     @PostMapping("/create")
     public ResponseEntity<CategoryDTO> createCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        ResponseEntity<CategoryDTO> responseEntity;
-        responseEntity = categoryService.createCategory(categoryDTO);
-        return responseEntity;
+        CategoryDTO savedDTO = categoryService.createCategory(categoryDTO);
+        return ResponseEntity.ok(savedDTO);
     }
 
     @GetMapping(path = "/get/{id}")
     public ResponseEntity<CategoryDTO> getCategory(@PathVariable("id") Long id) {
-        ResponseEntity<CategoryDTO> responseEntity = categoryService.findById(id);
-        return responseEntity;
+        CategoryDTO savedDTO = categoryService.findById(id);
+        return ResponseEntity.ok(savedDTO);
     }
 
     @GetMapping(path = "/get")
     public ResponseEntity<List<CategoryDTO>> getCategories(@RequestParam boolean active) {
-        ResponseEntity<List<CategoryDTO>> responseEntity = categoryService.findAll(active);
-        return responseEntity;
+        List<CategoryDTO> categoryDTOS = categoryService.findAll(active);
+        return ResponseEntity.ok(categoryDTOS);
     }
 
     @PutMapping(path = "/update")
     public ResponseEntity<CategoryDTO> updateCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        ResponseEntity<CategoryDTO> responseEntity = categoryService.updateCategory(categoryDTO);
-        return responseEntity;
+        CategoryDTO savedDTO = categoryService.updateCategory(categoryDTO);
+        return ResponseEntity.ok(savedDTO);
     }
 
     @PostMapping(path = "/upload-picture")

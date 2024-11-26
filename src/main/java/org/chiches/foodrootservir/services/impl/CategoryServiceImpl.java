@@ -37,7 +37,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity<CategoryDTO> createCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         try {
             CategoryEntity categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
             CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
@@ -48,8 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
                 String url = storageService.uploadFile(file, name);
                 savedDTO.setUrl(url);
             }
-            ResponseEntity<CategoryDTO> responseEntity = ResponseEntity.ok().body(savedDTO);
-            return responseEntity;
+            return savedDTO;
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Category was not created due to problems connecting to the database");
         }
@@ -57,17 +56,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Cacheable("category")
-    public ResponseEntity<CategoryDTO> findById(Long id) {
+    public CategoryDTO findById(Long id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
         CategoryDTO categoryDTO = modelMapper.map(categoryEntity, CategoryDTO.class);
-        ResponseEntity<CategoryDTO> responseEntity = ResponseEntity.ok().body(categoryDTO);
-        return responseEntity;
+        return categoryDTO;
     }
 
     @Override
     @Cacheable("categories")
-    public ResponseEntity<List<CategoryDTO>> findAll(boolean active) {
+    public List<CategoryDTO> findAll(boolean active) {
         List<CategoryEntity> categoryEntities;
         if (active) {
             categoryEntities = categoryRepository.findAllNotDeleted();
@@ -78,8 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryDTO> categoryDTOs = categoryEntities.stream()
                 .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
                 .toList();
-        ResponseEntity<List<CategoryDTO>> responseEntity = ResponseEntity.ok().body(categoryDTOs);
-        return responseEntity;
+        return categoryDTOs;
     }
 
     @Override
@@ -87,7 +84,7 @@ public class CategoryServiceImpl implements CategoryService {
             @CacheEvict(value = "category", key = "#categoryDTO.id"),
             @CacheEvict(value = "categories", allEntries = true)
     })
-    public ResponseEntity<CategoryDTO> updateCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
         CategoryEntity categoryEntity = categoryRepository.findById(categoryDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         try {
@@ -100,8 +97,7 @@ public class CategoryServiceImpl implements CategoryService {
                 String url = storageService.uploadFile(file, name);
                 savedDTO.setUrl(url);
             }
-            ResponseEntity<CategoryDTO> responseEntity = ResponseEntity.ok().body(savedDTO);
-            return responseEntity;
+            return savedDTO;
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Category was not created due to problems connecting to the database");
         }
