@@ -11,6 +11,9 @@ import org.chiches.foodrootservir.repositories.CategoryRepository;
 import org.chiches.foodrootservir.services.CategoryService;
 import org.chiches.foodrootservir.services.StorageService;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -53,6 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable("category")
     public ResponseEntity<CategoryDTO> findById(Long id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
@@ -62,6 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Cacheable("categories")
     public ResponseEntity<List<CategoryDTO>> findAll(boolean active) {
         List<CategoryEntity> categoryEntities;
         if (active) {
@@ -78,6 +83,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "category", key = "#categoryDTO.id"),
+            @CacheEvict(value = "categories", allEntries = true)
+    })
     public ResponseEntity<CategoryDTO> updateCategory(CategoryDTO categoryDTO) {
         CategoryEntity categoryEntity = categoryRepository.findById(categoryDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
