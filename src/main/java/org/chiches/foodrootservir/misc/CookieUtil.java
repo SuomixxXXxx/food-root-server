@@ -8,8 +8,9 @@ import org.springframework.stereotype.Service;
 public class CookieUtil {
     public static final String JWT_COOKIE_NAME = "jwtToken";
     public static final String REFRESH_COOKIE_NAME = "refreshToken";
-    public static final String DOMAIN = "localhost";
+    public static final String DOMAIN = "obamus.ru";
     public static final String PATH = "/api";
+    public static final boolean SECURE = true;
     private static final boolean HTTP_ONLY_JWT = false;// FIXME: security issue, XSS vulnerability
     private static final boolean HTTP_ONLY_REFRESH = true;
     public Cookie createJWTCookie(String jwt) {
@@ -18,7 +19,8 @@ public class CookieUtil {
         cookie.setPath(PATH);
         cookie.setMaxAge(60 * 30);
         cookie.setDomain(DOMAIN);
-        cookie.setAttribute("SameSite", "Lax");
+        cookie.setAttribute("SameSite", "None");
+        cookie.setSecure(SECURE);
         return cookie;
     }
     public Cookie createRefreshCookie(String refreshToken) {
@@ -27,6 +29,8 @@ public class CookieUtil {
         cookie.setPath(PATH);
         cookie.setMaxAge(86400);
         cookie.setDomain(DOMAIN);
+        cookie.setAttribute("SameSite", "None");
+        cookie.setSecure(SECURE);
         return cookie;
     }
     public Cookie deleteJWTCookie() {
@@ -35,6 +39,8 @@ public class CookieUtil {
         cookie.setPath(PATH);
         cookie.setMaxAge(0);
         cookie.setDomain(DOMAIN);
+        cookie.setAttribute("SameSite", "None");
+        cookie.setSecure(SECURE);
         return cookie;
     }
     public Cookie deleteRefreshCookie() {
@@ -43,6 +49,8 @@ public class CookieUtil {
         cookie.setPath(PATH);
         cookie.setMaxAge(0);
         cookie.setDomain(DOMAIN);
+        cookie.setAttribute("SameSite", "None");
+        cookie.setSecure(SECURE);
         return cookie;
     }
     public void logout(HttpServletResponse response) {
