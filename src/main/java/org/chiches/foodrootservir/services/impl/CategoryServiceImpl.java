@@ -37,6 +37,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "category", key = "#categoryDTO.id"),
+            @CacheEvict(value = "categories", allEntries = true)
+    })
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         try {
             CategoryEntity categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
@@ -64,7 +68,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    @Cacheable("categories")
+    @Cacheable(value = "categories", key = "#active")
     public List<CategoryDTO> findAll(boolean active) {
         List<CategoryEntity> categoryEntities;
         if (active) {
