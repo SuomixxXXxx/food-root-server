@@ -38,7 +38,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "category", key = "#categoryDTO.id"),
             @CacheEvict(value = "categories", allEntries = true)
     })
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {

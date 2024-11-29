@@ -28,7 +28,7 @@ services:
     image: postgres:15
     container_name: postgres_db
     ports:
-      - "5432:5432"
+      - "5431:5432"
     environment:
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
