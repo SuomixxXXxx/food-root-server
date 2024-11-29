@@ -10,13 +10,13 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface CategoryService {
-    ResponseEntity<CategoryDTO> createCategory(CategoryDTO categoryDTO);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
-    ResponseEntity<CategoryDTO> findById(Long id);
+    CategoryDTO findById(Long id);
 
-    ResponseEntity<List<CategoryDTO>> findAll(boolean active);
+    List<CategoryDTO> findAll(boolean active);
 
-    ResponseEntity<CategoryDTO> updateCategory(CategoryDTO categoryDTO);
+    CategoryDTO updateCategory(CategoryDTO categoryDTO);
 
-    public ResponseEntity<UrlDTO> uploadImage(FileUploadDTO fileUploadDTO);
+    ResponseEntity<UrlDTO> uploadImage(FileUploadDTO fileUploadDTO);
 }

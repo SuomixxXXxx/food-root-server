@@ -130,6 +130,11 @@
             <artifactId>logstash-logback-encoder</artifactId>
             <version>8.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <version>3.4.0</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -157,8 +162,25 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <image>
+                        <name>food-root-servir:latest</name> <!-- Customize image name and version -->
+                        <createdDate>now</createdDate>
+<!--                        <builder>paketobuildpacks/builder:base</builder> &lt;!&ndash; Specify a builder &ndash;&gt;-->
+                        <env>
+                            <SPRING_PROFILES_ACTIVE>prod</SPRING_PROFILES_ACTIVE>
+                            <CREATED_DATE>${maven.build.timestamp}</CREATED_DATE>
+<!--                            <BP_IMAGE_LABELS>org.label-schema.build-date=2024-11-26T14:30:00+0300</BP_IMAGE_LABELS>-->
+                        </env>
+<!--                        <labels>-->
+<!--                            <org.opencontainers.image.created>${maven.build.timestamp}</org.opencontainers.image.created>-->
+<!--                            <org.opencontainers.image.title>Food Root Servir</org.opencontainers.image.title>-->
+<!--                        </labels>-->
+                    </image>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
 
 </project>

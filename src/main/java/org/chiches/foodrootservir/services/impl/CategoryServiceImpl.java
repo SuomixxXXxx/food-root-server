@@ -11,6 +11,9 @@ import org.chiches.foodrootservir.repositories.CategoryRepository;
 import org.chiches.foodrootservir.services.CategoryService;
 import org.chiches.foodrootservir.services.StorageService;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,7 +37,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseEntity<CategoryDTO> createCategory(CategoryDTO categoryDTO) {
+    @Caching(evict = {
+            @CacheEvict(value = "category", key = "#categoryDTO.id"),
+            @CacheEvict(value = "categories", allEntries = true)
+    })
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         try {
             CategoryEntity categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
             CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
@@ -45,24 +52,24 @@ public class CategoryServiceImpl implements CategoryService {
                 String url = storageService.uploadFile(file, name);
                 savedDTO.setUrl(url);
             }
-            ResponseEntity<CategoryDTO> responseEntity = ResponseEntity.ok().body(savedDTO);
-            return responseEntity;
+            return savedDTO;
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Category was not created due to problems connecting to the database");
         }
     }
 
     @Override
-    public ResponseEntity<CategoryDTO> findById(Long id) {
+    @Cacheable("category")
+    public CategoryDTO findById(Long id) {
         CategoryEntity categoryEntity = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + id + " not found"));
         CategoryDTO categoryDTO = modelMapper.map(categoryEntity, CategoryDTO.class);
-        ResponseEntity<CategoryDTO> responseEntity = ResponseEntity.ok().body(categoryDTO);
-        return responseEntity;
+        return categoryDTO;
     }
 
     @Override
-    public ResponseEntity<List<CategoryDTO>> findAll(boolean active) {
+    @Cacheable(value = "categories", key = "#active")
+    public List<CategoryDTO> findAll(boolean active) {
         List<CategoryEntity> categoryEntities;
         if (active) {
             categoryEntities = categoryRepository.findAllNotDeleted();
@@ -73,12 +80,15 @@ public class CategoryServiceImpl implements CategoryService {
         List<CategoryDTO> categoryDTOs = categoryEntities.stream()
                 .map(categoryEntity -> modelMapper.map(categoryEntity, CategoryDTO.class))
                 .toList();
-        ResponseEntity<List<CategoryDTO>> responseEntity = ResponseEntity.ok().body(categoryDTOs);
-        return responseEntity;
+        return categoryDTOs;
     }
 
     @Override
-    public ResponseEntity<CategoryDTO> updateCategory(CategoryDTO categoryDTO) {
+    @Caching(evict = {
+            @CacheEvict(value = "category", key = "#categoryDTO.id"),
+            @CacheEvict(value = "categories", allEntries = true)
+    })
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
         CategoryEntity categoryEntity = categoryRepository.findById(categoryDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         try {
@@ -91,8 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
                 String url = storageService.uploadFile(file, name);
                 savedDTO.setUrl(url);
             }
-            ResponseEntity<CategoryDTO> responseEntity = ResponseEntity.ok().body(savedDTO);
-            return responseEntity;
+            return savedDTO;
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Category was not created due to problems connecting to the database");
         }

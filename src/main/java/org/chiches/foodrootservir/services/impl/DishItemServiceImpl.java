@@ -15,6 +15,8 @@ import org.chiches.foodrootservir.repositories.DishItemRepository;
 import org.chiches.foodrootservir.services.DishItemService;
 import org.chiches.foodrootservir.services.StorageService;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +43,10 @@ public class DishItemServiceImpl implements DishItemService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "category", key = "#dishItemDTO.categoryDTO.id"),
+            @CacheEvict(value = "categories", allEntries = true)
+    })
     public ResponseEntity<DishItemDTO> createDishItem(DishItemDTO dishItemDTO) {
         DishItemEntity dishItemEntity = modelMapper.map(dishItemDTO, DishItemEntity.class);
         CategoryEntity categoryEntity = categoryRepository.findById(dishItemDTO.getCategoryDTO().getId())
