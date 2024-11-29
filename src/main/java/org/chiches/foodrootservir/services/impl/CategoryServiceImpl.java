@@ -38,7 +38,6 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @Caching(evict = {
-            @CacheEvict(value = "category", key = "#categoryDTO.id"),
             @CacheEvict(value = "categories", allEntries = true)
     })
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
@@ -47,7 +46,7 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
             CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
             MultipartFile file = categoryDTO.getFile();
-            String name = String.format("dishes/%d.jpg", categoryEntity.getId());
+            String name = String.format("categories/%d.jpg", categoryEntity.getId());
             if (file != null) {
                 String url = storageService.uploadFile(file, name);
                 savedDTO.setUrl(url);
@@ -96,7 +95,7 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
             CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
             MultipartFile file = categoryDTO.getFile();
-            String name = String.format("dishes/%d.jpg", categoryEntity.getId());
+            String name = String.format("categories/%d.jpg", categoryEntity.getId());
             if (file != null) {
                 String url = storageService.uploadFile(file, name);
                 savedDTO.setUrl(url);
