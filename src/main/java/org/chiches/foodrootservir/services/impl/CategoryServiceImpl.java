@@ -7,6 +7,7 @@ import org.chiches.foodrootservir.exceptions.DatabaseException;
 import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
 import org.chiches.foodrootservir.dto.CategoryDTO;
 import org.chiches.foodrootservir.entities.CategoryEntity;
+import org.chiches.foodrootservir.exceptions.file.InvalidFileFormatException;
 import org.chiches.foodrootservir.repositories.CategoryRepository;
 import org.chiches.foodrootservir.services.CategoryService;
 import org.chiches.foodrootservir.services.StorageService;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -96,14 +98,24 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
         CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
         if (previewPicture != null) {
-            String name = String.format("categories/preview/%d.jpg", savedDTO.getId());
-            String url = storageService.uploadFile(previewPicture, name);
-            savedDTO.setPreviewPictureUrl(url);
+            String contentType = previewPicture.getContentType();
+            if (Arrays.asList("image/jpeg", "image/png").contains(contentType)) {
+                String name = String.format("categories/preview/%d.jpg", savedDTO.getId());
+                String url = storageService.uploadFile(previewPicture, name);
+                savedDTO.setPreviewPictureUrl(url);
+            } else {
+                throw new InvalidFileFormatException("File format is not allowed: " + contentType);
+            }
         }
         if (mainPicture != null) {
-            String name = String.format("categories/main/%d.jpg", savedDTO.getId());
-            String url = storageService.uploadFile(mainPicture, name);
-            savedDTO.setMainPictureUrl(url);
+            String contentType = previewPicture.getContentType();
+            if (Arrays.asList("image/jpeg", "image/png").contains(contentType)) {
+                String name = String.format("categories/main/%d.jpg", savedDTO.getId());
+                String url = storageService.uploadFile(mainPicture, name);
+                savedDTO.setMainPictureUrl(url);
+            } else {
+                throw new InvalidFileFormatException("File format is not allowed: " + contentType);
+            }
         }
         return savedDTO;
     }

@@ -23,8 +23,8 @@ public class CategoryController {
 
     @PostMapping("/create")
     public ResponseEntity<CategoryDTO> createCategory(@RequestPart CategoryDTO categoryDTO,
-                                                      @RequestPart MultipartFile previewPicture,
-                                                      @RequestPart MultipartFile mainPicture) {
+                                                      @RequestPart(value = "previewPicture", required = false) MultipartFile previewPicture,
+                                                      @RequestPart(value = "mainPicture", required = false) MultipartFile mainPicture) {
         CategoryDTO savedDTO = categoryService.createCategory(categoryDTO, previewPicture, mainPicture);
         return ResponseEntity.ok(savedDTO);
     }
@@ -41,10 +41,10 @@ public class CategoryController {
         return ResponseEntity.ok(categoryDTOS);
     }
 
-    @PutMapping(path = "/update")
+    @PatchMapping(path = "/update")
     public ResponseEntity<CategoryDTO> updateCategory(@RequestPart CategoryDTO categoryDTO,
-                                                      @RequestPart MultipartFile previewPicture,
-                                                      @RequestPart MultipartFile mainPicture) {
+                                                      @RequestPart(value = "previewPicture", required = false) MultipartFile previewPicture,
+                                                      @RequestPart(value = "mainPicture", required = false) MultipartFile mainPicture) {
         CategoryDTO savedDTO = categoryService.updateCategory(categoryDTO, previewPicture, mainPicture);
         return ResponseEntity.ok(savedDTO);
     }
