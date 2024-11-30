@@ -5,6 +5,7 @@ import org.chiches.foodrootservir.dto.FileUploadDTO;
 import org.chiches.foodrootservir.dto.UrlDTO;
 import org.chiches.foodrootservir.services.CategoryService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +22,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping("/create")
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<CategoryDTO> createCategory(@RequestPart CategoryDTO categoryDTO,
                                                       @RequestPart(value = "previewPicture", required = false) MultipartFile previewPicture,
                                                       @RequestPart(value = "mainPicture", required = false) MultipartFile mainPicture) {
