@@ -3,6 +3,7 @@ package org.chiches.foodrootservir.exceptions;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.chiches.foodrootservir.dto.ExceptionResponse;
 import org.chiches.foodrootservir.exceptions.file.EmptyFileException;
+import org.chiches.foodrootservir.exceptions.file.InvalidFileFormatException;
 import org.chiches.foodrootservir.exceptions.order.OrderException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,8 +68,8 @@ public class GlobalExceptionHandler {
         return responseEntity;
     }
 
-    @ExceptionHandler(InvalidFileNameException.class)
-    public ResponseEntity<ExceptionResponse> catchInvalidFileNameException(InvalidFileNameException e) {
+    @ExceptionHandler(InvalidFileFormatException.class)
+    public ResponseEntity<ExceptionResponse> catchInvalidFileFormatException(InvalidFileFormatException e) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(e.getMessage());
         ResponseEntity<ExceptionResponse> responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
         return responseEntity;
