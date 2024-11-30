@@ -7,6 +7,7 @@ import org.chiches.foodrootservir.services.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,8 +22,10 @@ public class CategoryController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<CategoryDTO> createCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        CategoryDTO savedDTO = categoryService.createCategory(categoryDTO);
+    public ResponseEntity<CategoryDTO> createCategory(@RequestPart CategoryDTO categoryDTO,
+                                                      @RequestPart MultipartFile previewPicture,
+                                                      @RequestPart MultipartFile mainPicture) {
+        CategoryDTO savedDTO = categoryService.createCategory(categoryDTO, previewPicture, mainPicture);
         return ResponseEntity.ok(savedDTO);
     }
 
@@ -39,16 +42,12 @@ public class CategoryController {
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<CategoryDTO> updateCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        CategoryDTO savedDTO = categoryService.updateCategory(categoryDTO);
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestPart CategoryDTO categoryDTO,
+                                                      @RequestPart MultipartFile previewPicture,
+                                                      @RequestPart MultipartFile mainPicture) {
+        CategoryDTO savedDTO = categoryService.updateCategory(categoryDTO, previewPicture, mainPicture);
         return ResponseEntity.ok(savedDTO);
     }
 
-    @PostMapping(path = "/upload-picture")
-    public ResponseEntity<UrlDTO> uploadPicture(@ModelAttribute FileUploadDTO fileUploadDTO) {
-        ResponseEntity<UrlDTO> responseEntity;
-        responseEntity = categoryService.uploadImage(fileUploadDTO);
-        return responseEntity;
-    }
 
 }
