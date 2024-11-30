@@ -90,7 +90,7 @@ public class CategoryServiceImpl implements CategoryService {
             CategoryDTO savedDTO = saveCategory(categoryEntity, previewPicture, mainPicture);
             return savedDTO;
         } catch (DataAccessException | PersistenceException e) {
-            throw new DatabaseException("Category was not created due to problems connecting to the database");
+            throw new DatabaseException("Category was not updated due to problems connecting to the database");
         }
     }
 
@@ -99,7 +99,7 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
         if (previewPicture != null) {
             String contentType = previewPicture.getContentType();
-            if (Arrays.asList("image/jpeg", "image/png").contains(contentType)) {
+            if (contentType != null && Arrays.asList("image/jpeg", "image/png").contains(contentType)) {
                 String name = String.format("categories/preview/%d.jpg", savedDTO.getId());
                 String url = storageService.uploadFile(previewPicture, name);
                 savedDTO.setPreviewPictureUrl(url);
@@ -108,8 +108,8 @@ public class CategoryServiceImpl implements CategoryService {
             }
         }
         if (mainPicture != null) {
-            String contentType = previewPicture.getContentType();
-            if (Arrays.asList("image/jpeg", "image/png").contains(contentType)) {
+            String contentType = mainPicture.getContentType();
+            if (contentType != null && Arrays.asList("image/jpeg", "image/png").contains(contentType)) {
                 String name = String.format("categories/main/%d.jpg", savedDTO.getId());
                 String url = storageService.uploadFile(mainPicture, name);
                 savedDTO.setMainPictureUrl(url);
