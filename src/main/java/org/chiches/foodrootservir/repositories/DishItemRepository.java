@@ -2,6 +2,8 @@ package org.chiches.foodrootservir.repositories;
 
 import org.chiches.foodrootservir.entities.CategoryEntity;
 import org.chiches.foodrootservir.entities.DishItemEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,7 +14,7 @@ import java.util.Optional;
 @Repository
 public interface DishItemRepository extends GeneralRepository<DishItemEntity, Long> {
 
-    List<DishItemEntity> findAllByCategoryAndIsDeletedFalse(CategoryEntity categoryEntity);
+    Page<DishItemEntity> findAllByCategoryAndIsDeletedFalse(CategoryEntity categoryEntity, Pageable pageable);
 
     List<DishItemEntity> findAllByNameContainingIgnoreCaseAndIsDeletedFalse(String name);
 
