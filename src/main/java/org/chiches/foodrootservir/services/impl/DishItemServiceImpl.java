@@ -18,6 +18,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -47,7 +50,7 @@ public class DishItemServiceImpl implements DishItemService {
             @CacheEvict(value = "category", key = "#dishItemDTO.categoryDTO.id"),
             @CacheEvict(value = "categories", allEntries = true)
     })
-    public ResponseEntity<DishItemDTO> createDishItem(DishItemDTO dishItemDTO) {
+    public DishItemDTO createDishItem(DishItemDTO dishItemDTO) {
         DishItemEntity dishItemEntity = modelMapper.map(dishItemDTO, DishItemEntity.class);
         CategoryEntity categoryEntity = categoryRepository.findById(dishItemDTO.getCategoryDTO().getId())
                 .orElseThrow();
@@ -61,35 +64,32 @@ public class DishItemServiceImpl implements DishItemService {
                 String url = storageService.uploadFile(file, name);
                 savedDishItemDTO.setUrl(url);
             }
-            ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
-            return responseEntity;
+            return savedDishItemDTO;
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Dish item was not created due to problems connecting to the database");
         }
     }
 
     @Override
-    public ResponseEntity<DishItemDTO> findById(Long id) {
+    public DishItemDTO findById(Long id) {
         DishItemEntity dishItemEntity = dishItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dish item with id " + id + " not found"));
         DishItemDTO dishItemDTO = modelMapper.map(dishItemEntity, DishItemDTO.class);
-        ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(dishItemDTO);
-        return responseEntity;
+        return dishItemDTO;
     }
 
     @Override
     @Transactional
-    public ResponseEntity<List<DishItemDTO>> findAll() {
+    public List<DishItemDTO> findAll() {
         List<DishItemEntity> dishItemEntities = dishItemRepository.findAll();
         List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
                 .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                 .toList();
-        ResponseEntity<List<DishItemDTO>> responseEntity = ResponseEntity.ok().body(dishItemDTOs);
-        return responseEntity;
+        return dishItemDTOs;
     }
 
     @Override
-    public ResponseEntity<DishItemDTO> update(DishItemDTO dishItemDTO) {
+    public DishItemDTO update(DishItemDTO dishItemDTO) {
         DishItemEntity dishItemEntity = dishItemRepository.findById(dishItemDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Dish item not found"));
         if (dishItemDTO.getCategoryDTO() != null && dishItemDTO.getCategoryDTO().getId() != null) {
@@ -118,27 +118,25 @@ public class DishItemServiceImpl implements DishItemService {
                 String url = storageService.uploadFile(file, name);
                 savedDishItemDTO.setUrl(url);
             }
-            ResponseEntity<DishItemDTO> responseEntity = ResponseEntity.ok().body(savedDishItemDTO);
-            return responseEntity;
+            return savedDishItemDTO;
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Dish item was not updated due to problems connecting to the database");
         }
     }
 
     @Override
-    public ResponseEntity<List<DishItemDTO>> getAllByCategory(Long categoryId) {
+    public List<DishItemDTO> getAllByCategory(Long categoryId, int page, int size) {
         CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + categoryId + " not found"));
-        List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByCategoryAndIsDeletedFalse(categoryEntity);
-        List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
-                .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DishItemEntity> dishItemEntities = dishItemRepository.findAllByCategoryAndIsDeletedFalse(categoryEntity, pageable);
+        List<DishItemDTO> dishItemDTOs = dishItemEntities.map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                 .toList();
-        ResponseEntity<List<DishItemDTO>> responseEntity = ResponseEntity.ok().body(dishItemDTOs);
-        return responseEntity;
+        return dishItemDTOs;
     }
 
     @Override
-    public ResponseEntity<List<DishItemDTO>> getAllByName(String name) {
+    public List<DishItemDTO> getAllByName(String name) {
         List<DishItemDTO> dishItemDTOs = new ArrayList<>();
         if (!name.isBlank()) {
             List<DishItemEntity> dishItemEntities = dishItemRepository.findAllByNameContainingIgnoreCaseAndIsDeletedFalse(name.strip());
@@ -146,8 +144,7 @@ public class DishItemServiceImpl implements DishItemService {
                     .map(dishItemEntity -> modelMapper.map(dishItemEntity, DishItemDTO.class))
                     .toList();
         }
-        ResponseEntity<List<DishItemDTO>> responseEntity = ResponseEntity.ok().body(dishItemDTOs);
-        return responseEntity;
+        return dishItemDTOs;
     }
 
     @Override
@@ -163,15 +160,14 @@ public class DishItemServiceImpl implements DishItemService {
     }
 
     @Override
-    public ResponseEntity<UrlDTO> uploadImage(FileUploadDTO fileUploadDTO) {
+    public UrlDTO uploadImage(FileUploadDTO fileUploadDTO) {
         MultipartFile file = fileUploadDTO.getFile();
         String url;
         String name = String.format("dishes/%d.jpg", fileUploadDTO.getId());
             if (file != null) {
                 url = storageService.uploadFile(file, name);
                 UrlDTO urlDTO = new UrlDTO(url);
-                ResponseEntity<UrlDTO> responseEntity = ResponseEntity.ok().body(urlDTO);
-                return responseEntity;
+                return urlDTO;
             } else {
                 throw new RuntimeException();
         }

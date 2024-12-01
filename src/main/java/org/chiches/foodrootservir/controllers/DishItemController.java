@@ -6,6 +6,7 @@ import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.dto.FileUploadDTO;
 import org.chiches.foodrootservir.dto.UrlDTO;
 import org.chiches.foodrootservir.services.DishItemService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,44 +24,40 @@ public class DishItemController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<DishItemDTO> createDishItem(@ModelAttribute DishItemDTO dishItemDTO) {
-        ResponseEntity<DishItemDTO> responseEntity;
-        responseEntity = dishItemService.createDishItem(dishItemDTO);
-        return responseEntity;
+        DishItemDTO savedDTO =  dishItemService.createDishItem(dishItemDTO);
+        return ResponseEntity.ok(savedDTO);
     }
 
     @GetMapping(path = "/get/{id}")
     public ResponseEntity<DishItemDTO> getDishItem(@PathVariable("id") Long id) {
-        ResponseEntity<DishItemDTO> responseEntity;
-        responseEntity = dishItemService.findById(id);
-        return responseEntity;
+        DishItemDTO dishItemDTO = dishItemService.findById(id);
+        return ResponseEntity.ok(dishItemDTO);
     }
 
     @GetMapping(path = "/getByCategory")
-    public ResponseEntity<List<DishItemDTO>> getAllByCategory (@RequestParam Long categoryId) {
-        ResponseEntity<List<DishItemDTO>> responseEntity;
-        responseEntity = dishItemService.getAllByCategory(categoryId);
-        return responseEntity;
+    public ResponseEntity<List<DishItemDTO>> getAllByCategory (@RequestParam Long categoryId,
+                                                               @RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "12") int size) {
+        List<DishItemDTO> dishItemDTOs = dishItemService.getAllByCategory(categoryId, page, size);
+        return ResponseEntity.ok(dishItemDTOs);
     }
 
     @GetMapping(path = "/get")
     public ResponseEntity<List<DishItemDTO>> getDishItems() {
-        ResponseEntity<List<DishItemDTO>> responseEntity;
-        responseEntity = dishItemService.findAll();
-        return responseEntity;
+        List<DishItemDTO> dishItemDTOs = dishItemService.findAll();
+        return ResponseEntity.ok(dishItemDTOs);
     }
 
     @PatchMapping(path = "/update")
     public ResponseEntity<DishItemDTO> updateDishItem(@ModelAttribute DishItemDTO dishItemDTO) {
-        ResponseEntity<DishItemDTO> responseEntity;
-        responseEntity = dishItemService.update(dishItemDTO);
-        return responseEntity;
+        DishItemDTO savedDTO = dishItemService.update(dishItemDTO);
+        return ResponseEntity.ok(savedDTO);
     }
 
     @GetMapping(path = "/getByName")
     public ResponseEntity<List<DishItemDTO>> getAllByName(@RequestParam String name) {
-        ResponseEntity<List<DishItemDTO>> responseEntity;
-        responseEntity = dishItemService.getAllByName(name);
-        return responseEntity;
+        List<DishItemDTO> dishItemDTOs = dishItemService.getAllByName(name);
+        return ResponseEntity.ok(dishItemDTOs);
     }
 
     @DeleteMapping(path = "/delete")
@@ -70,9 +67,8 @@ public class DishItemController {
 
     @PostMapping(path = "/upload-picture")
     public ResponseEntity<UrlDTO> uploadPicture(@ModelAttribute FileUploadDTO fileUploadDTO) {
-        ResponseEntity<UrlDTO> responseEntity;
-        responseEntity = dishItemService.uploadImage(fileUploadDTO);
-        return responseEntity;
+        UrlDTO urlDTO = dishItemService.uploadImage(fileUploadDTO);
+        return ResponseEntity.ok(urlDTO);
     }
 
 }

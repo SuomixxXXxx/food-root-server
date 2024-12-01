@@ -5,25 +5,26 @@ import org.chiches.foodrootservir.dto.DishItemDTO;
 import org.chiches.foodrootservir.dto.FileUploadDTO;
 import org.chiches.foodrootservir.dto.UrlDTO;
 import org.chiches.foodrootservir.entities.CategoryEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface DishItemService {
-    ResponseEntity<DishItemDTO> createDishItem(DishItemDTO dishItemDTO);
+    DishItemDTO createDishItem(DishItemDTO dishItemDTO);
 
-    ResponseEntity<DishItemDTO> findById(Long id);
+    DishItemDTO findById(Long id);
 
-    ResponseEntity<List<DishItemDTO>> findAll();
+    List<DishItemDTO> findAll();
 
-    ResponseEntity<DishItemDTO> update(DishItemDTO dishItemDTO);
+    DishItemDTO update(DishItemDTO dishItemDTO);
 
-    ResponseEntity<List<DishItemDTO>> getAllByCategory(Long categoryId);
+    List<DishItemDTO> getAllByCategory(Long categoryId, int page, int size);
 
-    ResponseEntity<List<DishItemDTO>> getAllByName(String name);
+    List<DishItemDTO> getAllByName(String name);
 
     void delete(Long id);
 
-    ResponseEntity<UrlDTO> uploadImage(FileUploadDTO fileUploadDTO);
+    UrlDTO uploadImage(FileUploadDTO fileUploadDTO);
 
 }
