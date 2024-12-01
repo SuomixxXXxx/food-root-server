@@ -10,8 +10,8 @@ public class CategoryDTO {
     private Long id;
     @NotNull(message = "Name cannot be empty")
     private String name;
-    private MultipartFile file;
-    private String url;
+    private String previewPictureUrl;
+    private String mainPictureUrl;
 
     public CategoryDTO() {
     }
@@ -37,19 +37,19 @@ public class CategoryDTO {
         this.name = name;
     }
 
-    public MultipartFile getFile() {
-        return file;
+    public String getPreviewPictureUrl() {
+        return previewPictureUrl;
     }
 
-    public void setFile(MultipartFile multipartFile) {
-        this.file = multipartFile;
+    public void setPreviewPictureUrl(String previewPictureUrl) {
+        this.previewPictureUrl = previewPictureUrl;
     }
 
-    public String getUrl() {
-        return url;
+    public String getMainPictureUrl() {
+        return mainPictureUrl;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setMainPictureUrl(String mainPictureUrl) {
+        this.mainPictureUrl = mainPictureUrl;
     }
 }

@@ -1,4 +1,4 @@
-package org.chiches.foodrootservir.exceptions;
+package org.chiches.foodrootservir.exceptions.file;
 
 public class EmptyFileException extends RuntimeException {
     public EmptyFileException(String message) {

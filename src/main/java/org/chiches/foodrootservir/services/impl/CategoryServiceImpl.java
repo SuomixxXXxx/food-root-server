@@ -7,6 +7,7 @@ import org.chiches.foodrootservir.exceptions.DatabaseException;
 import org.chiches.foodrootservir.exceptions.ResourceNotFoundException;
 import org.chiches.foodrootservir.dto.CategoryDTO;
 import org.chiches.foodrootservir.entities.CategoryEntity;
+import org.chiches.foodrootservir.exceptions.file.InvalidFileFormatException;
 import org.chiches.foodrootservir.repositories.CategoryRepository;
 import org.chiches.foodrootservir.services.CategoryService;
 import org.chiches.foodrootservir.services.StorageService;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -40,17 +42,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Caching(evict = {
             @CacheEvict(value = "categories", allEntries = true)
     })
-    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO createCategory(CategoryDTO categoryDTO, MultipartFile previewPicture, MultipartFile mainPicture) {
         try {
             CategoryEntity categoryEntity = modelMapper.map(categoryDTO, CategoryEntity.class);
-            CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
-            CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
-            MultipartFile file = categoryDTO.getFile();
-            String name = String.format("categories/%d.jpg", categoryEntity.getId());
-            if (file != null) {
-                String url = storageService.uploadFile(file, name);
-                savedDTO.setUrl(url);
-            }
+            CategoryDTO savedDTO = saveCategory(categoryEntity, previewPicture, mainPicture);
             return savedDTO;
         } catch (DataAccessException | PersistenceException e) {
             throw new DatabaseException("Category was not created due to problems connecting to the database");
@@ -87,38 +82,42 @@ public class CategoryServiceImpl implements CategoryService {
             @CacheEvict(value = "category", key = "#categoryDTO.id"),
             @CacheEvict(value = "categories", allEntries = true)
     })
-    public CategoryDTO updateCategory(CategoryDTO categoryDTO) {
+    public CategoryDTO updateCategory(CategoryDTO categoryDTO, MultipartFile previewPicture, MultipartFile mainPicture) {
         CategoryEntity categoryEntity = categoryRepository.findById(categoryDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
         try {
             categoryEntity.setName(categoryDTO.getName());
-            CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
-            CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
-            MultipartFile file = categoryDTO.getFile();
-            String name = String.format("categories/%d.jpg", categoryEntity.getId());
-            if (file != null) {
-                String url = storageService.uploadFile(file, name);
-                savedDTO.setUrl(url);
-            }
+            CategoryDTO savedDTO = saveCategory(categoryEntity, previewPicture, mainPicture);
             return savedDTO;
         } catch (DataAccessException | PersistenceException e) {
-            throw new DatabaseException("Category was not created due to problems connecting to the database");
+            throw new DatabaseException("Category was not updated due to problems connecting to the database");
         }
     }
 
-    @Override
-    public ResponseEntity<UrlDTO> uploadImage(FileUploadDTO fileUploadDTO) {
-        MultipartFile file = fileUploadDTO.getFile();
-        String url;
-        String name = String.format("categories/%d.jpg", fileUploadDTO.getId());
-        if (file != null) {
-            url = storageService.uploadFile(file, name);
-            UrlDTO urlDTO = new UrlDTO(url);
-            ResponseEntity<UrlDTO> responseEntity = ResponseEntity.ok().body(urlDTO);
-            return responseEntity;
-        } else {
-            throw new RuntimeException();
+    private CategoryDTO saveCategory(CategoryEntity categoryEntity, MultipartFile previewPicture, MultipartFile mainPicture) {
+        CategoryEntity savedEntity = categoryRepository.save(categoryEntity);
+        CategoryDTO savedDTO = modelMapper.map(savedEntity, CategoryDTO.class);
+        if (previewPicture != null) {
+            String contentType = previewPicture.getContentType();
+            if (contentType != null && Arrays.asList("image/jpeg", "image/png").contains(contentType)) {
+                String name = String.format("categories/preview/%d.jpg", savedDTO.getId());
+                String url = storageService.uploadFile(previewPicture, name);
+                savedDTO.setPreviewPictureUrl(url);
+            } else {
+                throw new InvalidFileFormatException("File format is not allowed: " + contentType);
+            }
         }
+        if (mainPicture != null) {
+            String contentType = mainPicture.getContentType();
+            if (contentType != null && Arrays.asList("image/jpeg", "image/png").contains(contentType)) {
+                String name = String.format("categories/main/%d.jpg", savedDTO.getId());
+                String url = storageService.uploadFile(mainPicture, name);
+                savedDTO.setMainPictureUrl(url);
+            } else {
+                throw new InvalidFileFormatException("File format is not allowed: " + contentType);
+            }
+        }
+        return savedDTO;
     }
 
 }

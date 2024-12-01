@@ -5,8 +5,10 @@ import org.chiches.foodrootservir.dto.FileUploadDTO;
 import org.chiches.foodrootservir.dto.UrlDTO;
 import org.chiches.foodrootservir.services.CategoryService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,9 +22,11 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<CategoryDTO> createCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        CategoryDTO savedDTO = categoryService.createCategory(categoryDTO);
+    @PostMapping(value = "/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CategoryDTO> createCategory(@RequestPart CategoryDTO categoryDTO,
+                                                      @RequestPart(value = "previewPicture", required = false) MultipartFile previewPicture,
+                                                      @RequestPart(value = "mainPicture", required = false) MultipartFile mainPicture) {
+        CategoryDTO savedDTO = categoryService.createCategory(categoryDTO, previewPicture, mainPicture);
         return ResponseEntity.ok(savedDTO);
     }
 
@@ -38,17 +42,13 @@ public class CategoryController {
         return ResponseEntity.ok(categoryDTOS);
     }
 
-    @PutMapping(path = "/update")
-    public ResponseEntity<CategoryDTO> updateCategory(@ModelAttribute CategoryDTO categoryDTO) {
-        CategoryDTO savedDTO = categoryService.updateCategory(categoryDTO);
+    @PatchMapping(path = "/update")
+    public ResponseEntity<CategoryDTO> updateCategory(@RequestPart CategoryDTO categoryDTO,
+                                                      @RequestPart(value = "previewPicture", required = false) MultipartFile previewPicture,
+                                                      @RequestPart(value = "mainPicture", required = false) MultipartFile mainPicture) {
+        CategoryDTO savedDTO = categoryService.updateCategory(categoryDTO, previewPicture, mainPicture);
         return ResponseEntity.ok(savedDTO);
     }
 
-    @PostMapping(path = "/upload-picture")
-    public ResponseEntity<UrlDTO> uploadPicture(@ModelAttribute FileUploadDTO fileUploadDTO) {
-        ResponseEntity<UrlDTO> responseEntity;
-        responseEntity = categoryService.uploadImage(fileUploadDTO);
-        return responseEntity;
-    }
 
 }
