@@ -31,6 +31,7 @@ public class JwtService {
                     .toArray()
             );
         }
+
         return generateToken(claims, userDetails);
     }
 
