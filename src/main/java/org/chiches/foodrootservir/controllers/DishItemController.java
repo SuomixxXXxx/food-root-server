@@ -1,10 +1,7 @@
 package org.chiches.foodrootservir.controllers;
 
 import jakarta.validation.Valid;
-import org.chiches.foodrootservir.dto.CategoryDTO;
-import org.chiches.foodrootservir.dto.DishItemDTO;
-import org.chiches.foodrootservir.dto.FileUploadDTO;
-import org.chiches.foodrootservir.dto.UrlDTO;
+import org.chiches.foodrootservir.dto.*;
 import org.chiches.foodrootservir.services.DishItemService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -69,6 +66,12 @@ public class DishItemController {
     public ResponseEntity<UrlDTO> uploadPicture(@ModelAttribute FileUploadDTO fileUploadDTO) {
         UrlDTO urlDTO = dishItemService.uploadImage(fileUploadDTO);
         return ResponseEntity.ok(urlDTO);
+    }
+
+    @GetMapping(path = "/get-quantities")
+    public ResponseEntity<List<DishQuantityDTO>> getQuantities(@Valid @RequestBody DishIdsDTO dishIdsDTO) {
+        List<DishQuantityDTO> dishQuantityDTOs = dishItemService.getQuantities(dishIdsDTO);
+        return ResponseEntity.ok(dishQuantityDTOs);
     }
 
 }

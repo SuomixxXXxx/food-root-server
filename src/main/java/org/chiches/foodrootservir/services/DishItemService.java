@@ -1,9 +1,6 @@
 package org.chiches.foodrootservir.services;
 
-import org.chiches.foodrootservir.dto.CategoryDTO;
-import org.chiches.foodrootservir.dto.DishItemDTO;
-import org.chiches.foodrootservir.dto.FileUploadDTO;
-import org.chiches.foodrootservir.dto.UrlDTO;
+import org.chiches.foodrootservir.dto.*;
 import org.chiches.foodrootservir.entities.CategoryEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +23,7 @@ public interface DishItemService {
     void delete(Long id);
 
     UrlDTO uploadImage(FileUploadDTO fileUploadDTO);
+
+    List<DishQuantityDTO> getQuantities(DishIdsDTO dishIdsDTO);
 
 }

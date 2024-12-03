@@ -2,10 +2,7 @@ package org.chiches.foodrootservir.services.impl;
 
 import jakarta.persistence.PersistenceException;
 import org.apache.tomcat.util.http.fileupload.impl.FileUploadIOException;
-import org.chiches.foodrootservir.dto.CategoryDTO;
-import org.chiches.foodrootservir.dto.DishItemDTO;
-import org.chiches.foodrootservir.dto.FileUploadDTO;
-import org.chiches.foodrootservir.dto.UrlDTO;
+import org.chiches.foodrootservir.dto.*;
 import org.chiches.foodrootservir.entities.CategoryEntity;
 import org.chiches.foodrootservir.entities.DishItemEntity;
 import org.chiches.foodrootservir.exceptions.DatabaseException;
@@ -16,6 +13,7 @@ import org.chiches.foodrootservir.services.DishItemService;
 import org.chiches.foodrootservir.services.StorageService;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
@@ -48,7 +46,9 @@ public class DishItemServiceImpl implements DishItemService {
     @Override
     @Caching(evict = {
             @CacheEvict(value = "category", key = "#dishItemDTO.categoryDTO.id"),
-            @CacheEvict(value = "categories", allEntries = true)
+            @CacheEvict(value = "categories", allEntries = true),
+            @CacheEvict(value = "dishItems", allEntries = true),
+            @CacheEvict(value = "DishItemsByCategory", allEntries = true),
     })
     public DishItemDTO createDishItem(DishItemDTO dishItemDTO) {
         DishItemEntity dishItemEntity = modelMapper.map(dishItemDTO, DishItemEntity.class);
@@ -71,6 +71,7 @@ public class DishItemServiceImpl implements DishItemService {
     }
 
     @Override
+    @Cacheable("dishItem")
     public DishItemDTO findById(Long id) {
         DishItemEntity dishItemEntity = dishItemRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Dish item with id " + id + " not found"));
@@ -80,6 +81,7 @@ public class DishItemServiceImpl implements DishItemService {
 
     @Override
     @Transactional
+    @Cacheable("DishItems")
     public List<DishItemDTO> findAll() {
         List<DishItemEntity> dishItemEntities = dishItemRepository.findAll();
         List<DishItemDTO> dishItemDTOs = dishItemEntities.stream()
@@ -89,6 +91,11 @@ public class DishItemServiceImpl implements DishItemService {
     }
 
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "dishItems", allEntries = true),
+            @CacheEvict(value = "DishItemsByCategory", allEntries = true),
+            @CacheEvict(value = "dishItem", key = "#dishItemDTO.id")
+    })
     public DishItemDTO update(DishItemDTO dishItemDTO) {
         DishItemEntity dishItemEntity = dishItemRepository.findById(dishItemDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Dish item not found"));
@@ -125,6 +132,7 @@ public class DishItemServiceImpl implements DishItemService {
     }
 
     @Override
+    @Cacheable("DishItemsByCategory")
     public List<DishItemDTO> getAllByCategory(Long categoryId, int page, int size) {
         CategoryEntity categoryEntity = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category with id " + categoryId + " not found"));
@@ -173,4 +181,18 @@ public class DishItemServiceImpl implements DishItemService {
         }
     }
 
+    @Override
+    public List<DishQuantityDTO> getQuantities(DishIdsDTO dishIdsDTO) {
+        if (dishIdsDTO != null && dishIdsDTO.getDishIds() != null) {
+            List<Object[]> quantities = dishItemRepository.findQuantitiesByIds(dishIdsDTO.getDishIds());
+            List<DishQuantityDTO> dishQuantityDTOS = quantities.stream()
+                    .map(quantity -> new DishQuantityDTO(((Number) quantity[0]).longValue(), ((Number) quantity[1]).intValue()))
+                    .toList();
+            return dishQuantityDTOS;
+        } else if (dishIdsDTO == null) {
+            throw new NullPointerException("dishIdsDTO is null");
+        } else {
+            throw new NullPointerException("dish id is null");
+        }
+    }
 }
