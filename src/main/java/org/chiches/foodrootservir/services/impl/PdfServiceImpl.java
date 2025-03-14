@@ -43,7 +43,7 @@ public class PdfServiceImpl implements PdfService {
     }
 
     @Override
-    public ResponseEntity<byte[]> getOrdersReport(String date) {
+    public byte[] getOrdersReport(String date) {
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDateTime start = localDate.atStartOfDay();
         LocalDateTime finish = localDate.atTime(LocalTime.MAX);
@@ -77,17 +77,11 @@ public class PdfServiceImpl implements PdfService {
         }
         document.add(table);
         document.close();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=orders.pdf");
-        ResponseEntity<byte[]> responseEntity = ResponseEntity.ok()
-                .headers(httpHeaders)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(outputStream.toByteArray());
-        return responseEntity;
+        return outputStream.toByteArray();
     }
 
     @Override
-    public ResponseEntity<byte[]> getDishesReport(String startDate, String finishDate) {
+    public byte[] getDishesReport(String startDate, String finishDate) {
         LocalDate localDateStart = LocalDate.parse(startDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDate localDateFinish = LocalDate.parse(finishDate, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDateTime start = localDateStart.atStartOfDay();
@@ -126,13 +120,7 @@ public class PdfServiceImpl implements PdfService {
         document.add(table);
         document.add(new Paragraph(String.format("Total revenue for the specified period: %.2f", fullRevenue)));
         document.close();
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=orders.pdf");
-        ResponseEntity<byte[]> responseEntity = ResponseEntity.ok()
-                .headers(httpHeaders)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(outputStream.toByteArray());
-        return responseEntity;
+        return outputStream.toByteArray();
     }
 
 }

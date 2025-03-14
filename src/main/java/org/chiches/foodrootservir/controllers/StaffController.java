@@ -1,6 +1,8 @@
 package org.chiches.foodrootservir.controllers;
 
 import org.chiches.foodrootservir.services.impl.PdfServiceImpl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,14 +21,25 @@ public class StaffController {
 
     @GetMapping(path = "getOrdersReport")
     public ResponseEntity<byte[]> getOrderReport(@RequestParam String date) {
-        ResponseEntity<byte[]> responseEntity = pdfService.getOrdersReport(date);
-        return responseEntity;
+        byte[] report = pdfService.getOrdersReport(date);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=orders.pdf");
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(report);
     }
 
     @GetMapping(path = "getDishesReport")
     public ResponseEntity<byte[]> getDishesReport(@RequestParam String startDate, @RequestParam String finishDate) {
-        ResponseEntity<byte[]> responseEntity = pdfService.getDishesReport(startDate, finishDate);
-        return responseEntity;
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=orders.pdf");
+
+        byte[] report = pdfService.getDishesReport(startDate, finishDate);
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(report);
     }
 
 }

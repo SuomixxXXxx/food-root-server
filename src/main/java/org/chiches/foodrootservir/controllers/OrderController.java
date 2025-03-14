@@ -18,30 +18,26 @@ public class OrderController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
-        ResponseEntity<OrderDTO> responseEntity;
-        responseEntity = orderService.createOrder(orderDTO);
-        return responseEntity;
+        OrderDTO order = orderService.createOrder(orderDTO);
+        return ResponseEntity.ok(order);
     }
 
     @GetMapping(path = "get/{id}")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable("id") Long id) {
-        ResponseEntity<OrderDTO> responseEntity;
-        responseEntity = orderService.findById(id);
-        return responseEntity;
+        OrderDTO order = orderService.findById(id);
+        return ResponseEntity.ok(order);
     }
 
     @PatchMapping(path = "/complete")
     public ResponseEntity<OrderDTO> completeOrder(@RequestParam Long id) {
-        ResponseEntity<OrderDTO> responseEntity;
-        responseEntity = orderService.updateOrderStatus(id, OrderStatus.COMPLETED);
-        return responseEntity;
+        OrderDTO order = orderService.updateOrderStatus(id, OrderStatus.COMPLETED);
+        return ResponseEntity.ok(order);
     }
 
     @PatchMapping(path = "/cancel")
     public ResponseEntity<OrderDTO> cancelOrder(@RequestParam Long id) {
-        ResponseEntity<OrderDTO> responseEntity;
-        responseEntity = orderService.updateOrderStatus(id, OrderStatus.CANCELED);
-        return responseEntity;
+        OrderDTO order = orderService.updateOrderStatus(id, OrderStatus.CANCELED);
+        return ResponseEntity.ok(order);
     }
 
 }
