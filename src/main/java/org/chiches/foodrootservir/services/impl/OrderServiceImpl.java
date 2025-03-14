@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public ResponseEntity<OrderDTO> createOrder(OrderDTO orderDTO) {
+    public OrderDTO createOrder(OrderDTO orderDTO) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         UserEntity userEntity = userRepository.findByLogin(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User with login " + userDetails.getUsername() + " not found"));
@@ -60,11 +60,10 @@ public class OrderServiceImpl implements OrderService {
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
             OrderDTO savedOrderDTO = convert(savedOrderEntity);
-            ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
 
             notifyWebSocketClients();
 
-            return responseEntity;
+            return savedOrderDTO;
         } catch (DataAccessException | PersistenceException e) {
             System.out.println(e.getMessage());
             throw new DatabaseException("The order was not created due to problems connecting to the database");
@@ -72,37 +71,35 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<OrderDTO> findById(Long id) {
+    public OrderDTO findById(Long id) {
         OrderEntity orderEntity = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + id + " not found"));
         OrderDTO savedOrderDTO = convert(orderEntity);
-        ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
-        return responseEntity;
+        return savedOrderDTO;
     }
 
     @Override
     @Transactional
-    public ResponseEntity<?> findAllActive() {
+    public List<OrderDTO> findAllActive() {
         List<OrderDTO> activeOrders = orderRepository.findByStatus(OrderStatus.CREATED).stream()
                 .map(this::convert)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(activeOrders);
+        return activeOrders;
     }
 
     @Override
     @Transactional
-    public ResponseEntity<OrderDTO> updateOrderStatus(Long id, OrderStatus orderStatus) {
+    public OrderDTO updateOrderStatus(Long id, OrderStatus orderStatus) {
         OrderEntity orderEntity = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order with id " + id + " not found"));
         orderEntity.changeStatus(orderStatus);
         try {
             OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
             OrderDTO savedOrderDTO = convert(savedOrderEntity);
-            ResponseEntity<OrderDTO> responseEntity = ResponseEntity.ok().body(savedOrderDTO);
 
             notifyWebSocketClients();
 
-            return responseEntity;
+            return savedOrderDTO;
         } catch (DataAccessException | PersistenceException e) {
             System.out.println(e.getMessage());
             throw new DatabaseException("The order was not canceled due to problems connecting to the database");
